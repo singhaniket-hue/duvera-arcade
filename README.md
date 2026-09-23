@@ -31,6 +31,8 @@ npm run check
 npm run build
 ```
 
+`npm run check:mobile` drives all three games with emulated touch on a 320px phone, a Pixel 5 and a landscape iPhone (taps, swipes, pause, header layout, overflow). It needs Playwright with Chromium (`npm install --no-save playwright && npx playwright install chromium`, or a global install). Layout limits in the unchanged upstream packages are reported as `KNOWN` rather than failing.
+
 The build produces `dist/`, which can be hosted by any static host. Build output is not committed.
 
 ## Cloudflare Pages (deployment pending)
