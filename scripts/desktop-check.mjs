@@ -120,6 +120,7 @@ try {
   await page.locator('.game-card[href*="2048"]').click();f=await frame();await f.waitForSelector('.tile');
   check('generic navigation retains opt-out',await f.evaluate(()=>ArcadeCreator===null)&&await page.title()==='2048 · Duvera Arcade');
   await page.locator('.back-link').click();
+  await page.locator('.game-card').first().waitFor({state:'visible'});
   check('generic back navigation retains opt-out',await page.locator('.game-card').count()===3);
   check('no browser errors or failed asset requests',errors.length===0);
   console.log(`${passed} desktop checks passed; no human audio approval implied.`);
