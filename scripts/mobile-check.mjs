@@ -148,6 +148,7 @@ try {
     check(device, 'hextris: tapping Play starts game', await frame.evaluate(() => gameState === 1));
     const position = () => frame.evaluate(() => MainHex.position);
     const p0 = await position();
+    check(device, 'hextris: Play tap does not also rotate', p0 === 0, `position ${p0}`);
     await tap(box.x + box.width * 0.2, box.y + box.height * 0.6);
     const p1 = await position();
     await tap(box.x + box.width * 0.8, box.y + box.height * 0.6);
