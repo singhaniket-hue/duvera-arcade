@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 22
       - name: Static checks
-        run: npm run check
+        run: npm run check && npm run check:creator
       - name: Build
         run: npm run build
       - name: Install Playwright
@@ -29,10 +29,17 @@ jobs:
         run: npm run check:mobile
         env:
           SCREENSHOT_DIR: mobile-screenshots
+      - name: Moosher edition mobile checks
+        run: npm run check:mobile
+        env:
+          CREATOR_EDITION: moosher
+          SCREENSHOT_DIR: moosher-screenshots
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: mobile-screenshots
-          path: mobile-screenshots
+          path: |
+            mobile-screenshots
+            moosher-screenshots
           if-no-files-found: ignore

@@ -1,0 +1,18 @@
+.moosher-clumsy-bird body{background:#96d8ce}
+.creator-reaction-sticker{position:fixed;bottom:12px;left:12px;width:64px;height:64px;object-fit:contain;pointer-events:none;z-index:1000;filter:drop-shadow(0 2px 2px #0003)}.creator-reaction-sticker[hidden]{display:none}
+.moosher-2048 body{background:#f5efe5;color:#244845}
+.moosher-2048 .title{font-size:42px;letter-spacing:-2px;color:#165c56}
+.moosher-2048 .game-container{background:#5b8b83}
+.moosher-2048 .grid-cell{background:#ffffff25}
+.moosher-2048 .score-container,.moosher-2048 .best-container,.moosher-2048 .restart-button{background:#236b63}
+.moosher-2048 .tile.tile-2 .tile-inner{background:#e6f2dc;color:#255c53}
+.moosher-2048 .tile.tile-4 .tile-inner{background:#b8dfcb;color:#1d534f}
+.moosher-2048 .tile.tile-8 .tile-inner{background:#65afa3;color:#102f2d}
+.moosher-2048 .tile.tile-16 .tile-inner{background:#ef9b7e;color:#352018}
+.moosher-2048 .tile.tile-32 .tile-inner{background:#df7b62;color:white}
+.moosher-2048 .tile.tile-64 .tile-inner{background:#185d56;color:white}
+.moosher-2048 .tile.tile-128 .tile-inner,.moosher-2048 .tile.tile-256 .tile-inner,.moosher-2048 .tile.tile-512 .tile-inner,.moosher-2048 .tile.tile-1024 .tile-inner,.moosher-2048 .tile.tile-2048 .tile-inner{background-color:#edc964;background-image:linear-gradient(#edc964cc,#edc964cc),url('../creators/moosher/media/emote-win.png');background-size:cover;color:#24433b}
+.creator-game-note{font-size:12px!important;color:#48675e}
+.moosher-hextris body{background:#edf5ed}
+.moosher-hextris #HIGHSCORE{color:#175b57}
+@media(max-width:520px),(orientation:landscape) and (max-height:520px){.moosher-2048 .title{font-size:22px;letter-spacing:-1px}.moosher-2048 .creator-game-note{display:none}}

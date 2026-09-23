@@ -6,3 +6,7 @@
 @media(max-width:650px){.player-info h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
 @media(max-height:500px){.player-bar{min-height:0;padding-block:6px}.player-info p{display:none}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}.game-card:hover,.game-card:hover .cover img{transform:none}}
+
+/* Optional Moosher edition; original shell remains unchanged. */
+.creator-player{--bg:#173e38;--line:#52736a;--text:#fff9ed;--muted:#d2e6d7;--lime:#f0cf71}.creator-player .plain-button{background:#2c5d50;border-color:#668a7d}.creator-player #focus-game{display:none}.creator-player .back-link{min-height:44px;display:flex;align-items:center}.creator-player #creator-voice{min-height:44px}.creator-player .player-info{border:0;padding-left:0}.creator-player .player-bar{gap:12px}.creator-player .player-info h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:420px){.creator-player #fullscreen{display:none}.creator-player .player-info h1{font-size:17px}}

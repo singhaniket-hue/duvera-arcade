@@ -60,8 +60,25 @@ After deployment, add `leo.duvera.app` under the Pages project's **Custom domain
 - `credits.html`, `THIRD_PARTY.md`: creators, licenses and integration changes.
 - `scripts/`: dependency-free local server, checks and static build.
 
-Personalization and multiplayer are deferred. The included games are independent packages, so additional games can be added without changing their gameplay code.
+The first optional creator edition is Moosher; multiplayer remains deferred. The included games are independent packages, so additional games can be added without changing their gameplay code.
 
 ## Licensing
 
 The arcade shell is GPL-3.0. Each game retains its upstream license and attribution. See [THIRD_PARTY.md](THIRD_PARTY.md) and the license files within each game. The import preserves Clumsy Bird's original Git history.
+
+## Moosher creator edition
+
+Open `/creators/moosher/` for the fan-made edition of @Moosherr. It includes Moosh Flap (a generated character sprite), Moosh 2048, Moosh Spin, original short dialogue extracts, and an audio review page at `/creators/moosher/sounds.html`.
+
+Each player route also accepts `&creator=moosher`. Original routes remain unchanged; `?creator=default` explicitly opts out on a creator hostname. Once that hostname is connected to the static deployment, `moosher.duvera.app` or `moosherr.duvera.app` opens the creator edition automatically. This code does not create DNS records or deploy the website.
+
+Four audio candidates have been cut from automatic-caption timestamps, totaling 7.85 seconds. They require a human listening review. Laughter, crying and shouting are still unsourced; none is fabricated or cloned. See [source and review notes](creators/moosher/SOURCES.md). Disable individual clips or change voice volume on the review page; the player header mutes reactions. Reaction cooldowns prevent a voice clip on every tap, and the M key in Moosh Flap also suppresses reactions. Each edition keeps separate saved scores.
+
+Verification:
+
+```sh
+npm run check:creator
+CREATOR_EDITION=moosher SCREENSHOT_DIR=moosher-screenshots npm run check:mobile
+```
+
+CI runs both the original and Moosher mobile suite. The creator checks cover registry routing, opt-out, audio gating, cooldowns, mute/disabled settings, real 2048 merges, isolated save keys, required assets and sprite dimensions. Automated checks cannot approve the voice, source speaker or emotional timing; use the sound-review page and play the game yourself.

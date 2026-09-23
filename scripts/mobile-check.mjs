@@ -6,6 +6,8 @@ import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 const root = fileURLToPath(new URL('../', import.meta.url));
+const creator = process.env.CREATOR_EDITION || '';
+if (creator && creator !== 'moosher') throw Error('Unknown creator edition');
 async function loadPlaywright() {
   try { return await import('playwright'); } catch (_) {}
   try {
@@ -53,7 +55,7 @@ try {
       await touch('touchEnd', []);
     };
     const open = async id => {
-      await page.goto(`${base}play.html?game=${id}`);
+      await page.goto(`${base}play.html?game=${id}${creator ? "&creator=" + creator : ""}`);
       const frame = await (await page.waitForSelector('#game-frame')).contentFrame();
       await frame.waitForLoadState('load');
       await page.waitForTimeout(1500);
@@ -62,9 +64,9 @@ try {
     const shoot = async name => { if (shots) await page.screenshot({path: path.join(shots, `${device.replace(/\W+/g, '-').toLowerCase()}-${name}.png`), scale: 'css'}); };
     const noOverflow = frame => frame.evaluate(() => document.documentElement.scrollWidth <= innerWidth);
 
-    await page.goto(base);
+    await page.goto(creator ? `${base}creators/${creator}/` : base);
     check(device, 'menu: no horizontal scroll', await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
-    await page.locator('.game-card').first().tap();
+    await page.locator('.game-card, .creator-card').first().tap();
     await page.waitForURL(/game=/);
     check(device, 'menu: tapping a card opens the game', true);
     const title = await page.locator('#game-title').evaluate(el => ({full: el.scrollWidth, shown: el.clientWidth}));
@@ -98,13 +100,21 @@ try {
       check(device, `clumsy-bird: tap on ${where} flaps the bird upward`, await birdY() < before);
     }
     check(device, 'clumsy-bird: no horizontal scroll', await noOverflow(frame));
+    if (creator) {
+      check(device, 'creator: flying sprite is selected', await frame.evaluate(() => game.resources.find(x=>x.name==='clumsy').src.includes('/creators/moosher/media/flap-sprite.png')));
+      check(device, 'creator: title is personalized', await page.title() === 'Moosh Flap · Moosher Arcade');
+      await page.locator('#creator-voice').tap();
+      check(device, 'creator: mute reaches game', await frame.evaluate(() => CreatorAudio.settings().muted));
+      await page.locator('#creator-voice').tap();
+      check(device, 'creator: unmute reaches game', await frame.evaluate(() => !CreatorAudio.settings().muted));
+    }
 
     ({frame, box} = await open('2048'));
     const board = frame.locator('.game-container');
     const boardBox = await board.boundingBox();
     check(device, '2048: board visible without scrolling', boardBox.y >= box.y && boardBox.y + boardBox.height <= box.y + box.height + 1, `board ends ${Math.round(boardBox.y + boardBox.height - box.y)}px into a ${Math.round(box.height)}px frame`);
     await board.scrollIntoViewIfNeeded();
-    const state = () => frame.evaluate(() => localStorage.getItem('duvera.2048.gameState'));
+    const state = () => frame.evaluate(() => localStorage.getItem(window.ArcadeCreator ? 'duvera.moosher.2048.gameState' : 'duvera.2048.gameState'));
     let moves = 0;
     for (const [dx, dy] of [[-120, 0], [0, -120], [120, 0], [0, 120], [-120, 0], [0, -120]]) {
       const previous = await state();
@@ -125,14 +135,15 @@ try {
     await shoot('2048');
     check(device, '2048: tapping New Game resets score', await frame.evaluate(() => document.querySelector('.score-container').firstChild.textContent === '0'));
     check(device, '2048: no horizontal scroll', await noOverflow(frame));
+    if (creator) check(device, 'creator: 2048 save is isolated', await frame.evaluate(() => localStorage.getItem('duvera.moosher.2048.gameState') !== null && localStorage.getItem('duvera.2048.gameState') === null));
 
     ({frame, box} = await open('hextris'));
     check(device, 'hextris: no horizontal scroll', await noOverflow(frame));
     const overlap = await frame.evaluate(() => {
-      const size = 150 * settings.scale;
+      const size = (window.ArcadeCreator ? 100 : 150) * settings.scale;
       ctx.save();
       ctx.font = size + 'px Exo';
-      const metrics = ctx.measureText('Hextris');
+      const metrics = ctx.measureText(window.ArcadeCreator ? 'Moosh Spin' : 'Hextris');
       ctx.restore();
       const x = trueCanvas.width / 2 + gdx + 6 * settings.scale;
       const baseline = trueCanvas.height / 2.1 + gdy - 155 * settings.scale + size / 2 - 9 * settings.scale;
