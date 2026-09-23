@@ -1,49 +1,36 @@
-<!DOCTYPE HTML>
+<!doctype html>
 <html lang="en">
-    <head>
-        <title>Clumsy Bird</title>
-        <link rel="apple-touch-icon-precomposed" href="data/img/touch-icon-iphone.png"/>
-        <link rel="apple-touch-icon-precomposed" sizes="120x120" href="data/img/touch-icon-iphone-retina.png"/>
-        <link rel="shortcut icon" href="data/img/favicon.ico">
-        <link rel="stylesheet" type="text/css" media="screen" href="index.css">
-        <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black">
-        <meta name="apple-mobile-web-app-title" content="Clumsy Bird">
-        <meta charset="UTF-8" />
-        <meta name="description" content="Clumsy Bird - A Flappy Bird clone using MelonJS"/>
-        <meta name="keywords" content="flappybird, flappy, bird, game, html5, melonjs,clone"/>
-        <meta name="robots" content="index, follow">
-        <meta name="google-site-verification" content="RDZI9SqVaffd48uHfZMv67-YdvviOMe2HuULEYqVgd4" />
-        <meta property="og:image" content="http://ellisonleao.github.io/clumsy-bird/data/img/bg.png" />
-        <meta property="og:title" content="Clumsy Bird - A Flappy Bird clone using MelonJS"/>
-        <meta property="og:url" content="http://ellisonleao.github.io/clumsy-bird/"/>
-        <meta property="og:site_name" content="Clumsy Bird - MelonJS"/>
-
-        <!-- Twitter Card -->
-        <meta name="twitter:hashtag" content="clumsybird" />
-        <meta name="twitter:card" content="summary" />
-        <meta name="twitter:site" content="@ellisonleao" />
-        <meta name="twitter:creator" content="@ellisonleao" />
-        <meta name="twitter:title" content="Clumsy Bird" />
-        <meta name="twitter:description" content="A Flappy Bird melonJS clone" />
-
-        <!-- Humans -->
-        <link rel="author" href="humans.txt" />
-    </head>
-
-    <body>
-        <!-- Canvas placeholder -->
-        <div id="screen"></div>
-
-        <!-- melonJS Library -->
-        <script type="text/javascript" src="js/melonJS-min.js" ></script>
-        <script type="text/javascript" src="build/clumsy-min.js" ></script>
-        <script type="text/javascript">
-            window.onReady(function onReady() {
-                game.onload();
-            });
-        </script>
-
-    </body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Play Clumsy Bird, 2048 and Hextris in Duvera Arcade. Pick a game and jump in.">
+  <title>Duvera Arcade</title>
+  <link rel="icon" href="games/clumsy-bird/data/img/favicon.ico">
+  <link rel="stylesheet" href="assets/arcade.css">
+</head>
+<body>
+  <header class="site-header wrap">
+    <a class="brand" href="./" aria-label="Duvera Arcade home">DUVERA<span>ARCADE</span></a>
+    <span class="header-note">No downloads. Just play.</span>
+  </header>
+  <main class="wrap">
+    <div class="section-heading"><div><p class="eyebrow">THE GAME ROOM</p><h1>Pick a game.</h1></div><span class="count">03 games · Single player</span></div>
+    <div class="game-grid">
+      <a class="game-card bird-card" href="play.html?game=clumsy-bird">
+        <div class="cover cover-bird"><span class="game-number">01</span><img src="games/clumsy-bird/data/img/logo.png" alt="" width="351" height="145"></div>
+        <div class="card-content"><p class="genre">QUICK REFLEXES</p><h2>Clumsy Bird</h2><p class="description">A little bird. A narrow gap. See how far you can fly.</p><div class="card-bottom"><span>Space / click / tap</span><span class="play-label">Play <span aria-hidden="true">↗</span></span></div></div>
+      </a>
+      <a class="game-card numbers-card" href="play.html?game=2048">
+        <div class="cover cover-numbers"><span class="game-number">02</span><img src="games/2048/meta/apple-touch-icon.png" alt="" width="152" height="152"></div>
+        <div class="card-content"><p class="genre">NUMBER PUZZLE</p><h2>2048</h2><p class="description">Slide, combine and think ahead. Make the elusive 2048 tile.</p><div class="card-bottom"><span>Arrow keys / swipe</span><span class="play-label">Play <span aria-hidden="true">↗</span></span></div></div>
+      </a>
+      <a class="game-card hex-card" href="play.html?game=hextris">
+        <div class="cover cover-hex"><span class="game-number">03</span><img src="games/hextris/images/icons/transparent-512.png" alt="" width="190" height="190"></div>
+        <div class="card-content"><p class="genre">COLOUR MATCHING</p><h2>Hextris</h2><p class="description">Rotate the hexagon. Match three colours before the stack grows.</p><div class="card-bottom"><span>← → keys / tap sides</span><span class="play-label">Play <span aria-hidden="true">↗</span></span></div></div>
+      </a>
+    </div>
+    <p class="save-note">Personal bests are saved in this browser. No account needed.</p>
+  </main>
+  <footer class="site-footer wrap"><span>Duvera Arcade</span><nav aria-label="Footer"><a href="credits.html">Game credits &amp; licenses</a><a href="https://github.com/singhaniket-hue/duvera-arcade">Source code</a></nav></footer>
+</body>
 </html>

@@ -1,38 +1,14 @@
 {
-  "name": "clumsy-bird",
+  "name": "duvera-arcade",
   "version": "0.1.0",
-  "description": "Clumsy Bird - A MelonJS port of the famous Flappy Bird game",
-  "homepage": "http://ellisonleao.github.io/clumsy-bird/",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ellisonleao/clumsy-bird"
+  "private": true,
+  "description": "A static arcade with Clumsy Bird, 2048 and Hextris",
+  "license": "GPL-3.0",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "start": "node scripts/serve.mjs",
+    "check": "node scripts/check.mjs",
+    "build": "node scripts/build.mjs"
   },
-  "bugs": {
-    "url": "https://github.com/ellisonleao/clumsy-bird/issues"
-  },
-  "licenses": [
-    {
-      "type": "MIT License",
-      "url": "https://github.com/ellisonleao/clumsy-bird/blob/master/LICENSE"
-    }
-  ],
-  "author": {
-    "name": "Ellison Leão",
-    "email": "ellisonleao@gmail.com"
-  },
-  "engines": {
-    "node": ">= 0.8.0"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-contrib-jshint": "~0.8.0",
-    "grunt-contrib-concat": "~0.2.0",
-    "grunt-contrib-clean": "~0.4.0",
-    "grunt-contrib-uglify": "~0.2.7",
-    "grunt-contrib-nodeunit": "~0.1.2",
-    "grunt-contrib-connect": "^0.7.1",
-    "grunt-replace": "~0.4.3",
-    "grunt-manifest": "~0.4.0"
-  }
+  "engines": {"node": ">=18"}
 }

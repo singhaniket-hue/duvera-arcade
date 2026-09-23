@@ -1,37 +1,63 @@
-Clumsy Bird
-===========
+# Duvera Arcade
 
-A MelonJS made "Flappy Bird" clone.
+A static browser arcade with **Clumsy Bird**, **2048** and **Hextris**. No account, database, multiplayer server or API key is required.
 
-![](http://i.imgur.com/Slbvt65.png)
+## Play locally
 
-Play online at http://ellisonleao.github.io/clumsy-bird/
+With Node.js 18 or newer:
 
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/ellisonleao/clumsy-bird/tree/gh-pages)
-
-## Running Locally
-
-- Install [Node](http://nodejs.org/download/) and [Grunt](http://gruntjs.com/)
-- Install the dependencies
-
-```
-npm install
+```sh
+npm start
 ```
 
-Then just type on your shell:
+Open http://localhost:4173. There are no npm dependencies to install. Alternatively, serve this directory with any static web server. Use HTTP rather than opening HTML files directly from disk.
 
+## Games
+
+| Game | Player route | Controls | License |
+| --- | --- | --- | --- |
+| Clumsy Bird | `/play.html?game=clumsy-bird` | Space, click or tap; M to mute | GPL-3.0 |
+| 2048 | `/play.html?game=2048` | Arrow keys or swipe; R to restart | MIT |
+| Hextris | `/play.html?game=hextris` | Left/right arrows or tap sides; down to accelerate; P to pause | GPL-3.0-or-later |
+
+The player header keeps a route back to the menu. Click the game or use **Focus game** if keyboard input is focused on the header. Full-screen mode is available where the browser supports it.
+
+Scores are local to this browser and hostname, not a shared leaderboard. Clearing browser data resets them; restricted storage can prevent persistence. All game assets are bundled locally. No advertising or analytics scripts are loaded by the arcade.
+
+## Build and verify
+
+```sh
+npm run check
+npm run build
 ```
-grunt connect
-```
 
-Open your browser at `http://localhost:8001/`
+The build produces `dist/`, which can be hosted by any static host. Build output is not committed.
 
-## Making your customization
+## Cloudflare Pages (deployment pending)
 
-See [CUSTOMIZING](https://github.com/ellisonleao/clumsy-bird/blob/master/CUSTOMIZING.md)
+Connect `singhaniket-hue/duvera-arcade` through **Pages → Import an existing Git repository**. Use:
 
-## Some nice games made with this project
+| Setting | Value |
+| --- | --- |
+| Production branch | `master` |
+| Framework preset | None |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Root directory | Repository root |
 
-[Checkout here](https://github.com/ellisonleao/clumsy-bird/wiki/Games-using-clumsy-bird-code)
+After deployment, add `leo.duvera.app` under the Pages project's **Custom domains** and complete Cloudflare's DNS setup. Domain registration at Namecheap does not require a change if Cloudflare already manages the zone.
 
-Some thoughts about this code you can find on [my blog post](https://medium.com/@ellisonleao/clumsy-bird-an-open-source-flappy-bird-clone-cf615724730f)
+## Repository layout
+
+- `index.html`, `assets/`, `play.html`: arcade menu and player shell.
+- `games/clumsy-bird/`: original Clumsy Bird package, unchanged.
+- `games/2048/`: 2048, with host-appropriate attribution and separate save keys.
+- `games/hextris/`: Hextris, with legacy ads, analytics and external reporting removed.
+- `credits.html`, `THIRD_PARTY.md`: creators, licenses and integration changes.
+- `scripts/`: dependency-free local server, checks and static build.
+
+Personalization and multiplayer are deferred. The included games are independent packages, so additional games can be added without changing their gameplay code.
+
+## Licensing
+
+The arcade shell is GPL-3.0. Each game retains its upstream license and attribution. See [THIRD_PARTY.md](THIRD_PARTY.md) and the license files within each game. The import preserves Clumsy Bird's original Git history.
