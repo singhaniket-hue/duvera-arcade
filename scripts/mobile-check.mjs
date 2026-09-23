@@ -1,6 +1,7 @@
 // Drives each game with emulated touch input on phone-sized screens.
 // Needs Playwright with Chromium, installed locally or globally; the arcade itself stays dependency-free.
 import {spawn, execFileSync} from 'node:child_process';
+import {mkdir} from 'node:fs/promises';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
@@ -21,18 +22,19 @@ const base = `http://127.0.0.1:${port}/`;
 const server = spawn(process.execPath, [path.join(root, 'scripts/serve.mjs'), '--port', String(port), '--host', '127.0.0.1'], {stdio: ['ignore', 'pipe', 'inherit']});
 await new Promise(resolve => server.stdout.once('data', resolve));
 
-// Upstream packages are kept unchanged (see THIRD_PARTY.md), so their layout limits are reported, not failed.
-const known = new Set(['clumsy-bird: tap below canvas starts game', '2048: board visible without scrolling']);
+// Set SCREENSHOT_DIR to save what each game looks like on each screen.
+const shots = process.env.SCREENSHOT_DIR && path.resolve(process.env.SCREENSHOT_DIR);
+if (shots) await mkdir(shots, {recursive: true});
 const results = [];
 const check = (device, name, ok, detail = '') => {
-  const status = ok ? 'PASS' : known.has(name) ? 'KNOWN' : 'FAIL';
-  results.push(status);
-  console.log(`${status.padEnd(5)} ${device.padEnd(19)} ${name}${detail && !ok ? ` (${detail})` : ''}`);
+  results.push(ok);
+  console.log(`${ok ? 'PASS' : 'FAIL'} ${device.padEnd(20)} ${name}${detail && !ok ? ` (${detail})` : ''}`);
 };
 const screens = {
   'Small phone 320': {...devices['iPhone SE'], viewport: {width: 320, height: 568}},
   'Pixel 5': devices['Pixel 5'],
-  'iPhone 12 landscape': devices['iPhone 12 landscape']
+  'iPhone 12 landscape': devices['iPhone 12 landscape'],
+  'iPhone SE landscape': devices['iPhone SE landscape']
 };
 const browser = await chromium.launch(process.env.CHROMIUM_PATH ? {executablePath: process.env.CHROMIUM_PATH} : {});
 try {
@@ -57,6 +59,7 @@ try {
       await page.waitForTimeout(1500);
       return {frame, box: await page.locator('#game-frame').boundingBox()};
     };
+    const shoot = async name => { if (shots) await page.screenshot({path: path.join(shots, `${device.replace(/\W+/g, '-').toLowerCase()}-${name}.png`), scale: 'css'}); };
     const noOverflow = frame => frame.evaluate(() => document.documentElement.scrollWidth <= innerWidth);
 
     await page.goto(base);
@@ -70,31 +73,36 @@ try {
       const box = await page.locator(selector).boundingBox();
       if (box) check(device, `player: ${selector} is at least 44px tall`, box.height >= 44, `${Math.round(box.height)}px`);
     }
+    await shoot('player-header');
     check(device, 'player: page does not scroll', await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight && document.documentElement.scrollWidth <= innerWidth));
 
     let {frame, box} = await open('clumsy-bird');
     const canvas = await frame.evaluate(() => { const r = document.querySelector('canvas').getBoundingClientRect(); return {x: r.x, y: r.y, w: r.width, h: r.height}; });
     const inside = {x: box.x + canvas.x + canvas.w / 2, y: box.y + canvas.y + canvas.h / 2};
-    const below = box.height - canvas.y - canvas.h;
-    if (below > 40) {
-      await tap(inside.x, box.y + canvas.y + canvas.h + below / 2);
-      await page.waitForTimeout(500);
-      check(device, 'clumsy-bird: tap below canvas starts game', await frame.evaluate(() => me.state.isCurrent(me.state.PLAY)), `${Math.round(below)}px untappable strip under the canvas`);
-    }
+    // Taps in the letterbox around the canvas count as taps on the game.
+    const outside = canvas.y + canvas.h + 40 < box.height
+      ? {x: inside.x, y: box.y + (canvas.y + canvas.h + box.height) / 2}
+      : {x: box.x + canvas.x / 2, y: inside.y};
+    check(device, 'clumsy-bird: screen has room outside the canvas', outside.x > box.x + 10, `canvas ${Math.round(canvas.w)}x${Math.round(canvas.h)} in ${Math.round(box.width)}x${Math.round(box.height)}`);
+    await tap(outside.x, outside.y);
+    await page.waitForTimeout(500);
+    check(device, 'clumsy-bird: tap outside canvas starts game', await frame.evaluate(() => me.state.isCurrent(me.state.PLAY)));
     if (!await frame.evaluate(() => me.state.isCurrent(me.state.PLAY))) { await tap(inside.x, inside.y); await page.waitForTimeout(500); }
-    check(device, 'clumsy-bird: tap starts game', await frame.evaluate(() => me.state.isCurrent(me.state.PLAY)));
     await frame.waitForFunction(() => game.data.start === true, null, {timeout: 5000});
+    await shoot('clumsy-bird');
     const birdY = () => frame.evaluate(() => me.state.current().bird.pos.y);
-    const before = await birdY();
-    await tap(inside.x, inside.y);
-    await page.waitForTimeout(40);
-    check(device, 'clumsy-bird: tap flaps the bird upward', await birdY() < before);
+    for (const [where, point] of [['canvas', inside], ['outside canvas', outside]]) {
+      const before = await birdY();
+      await tap(point.x, point.y);
+      await page.waitForTimeout(40);
+      check(device, `clumsy-bird: tap on ${where} flaps the bird upward`, await birdY() < before);
+    }
     check(device, 'clumsy-bird: no horizontal scroll', await noOverflow(frame));
 
     ({frame, box} = await open('2048'));
     const board = frame.locator('.game-container');
     const boardBox = await board.boundingBox();
-    check(device, '2048: board visible without scrolling', boardBox.y + boardBox.height <= box.y + box.height + 1, `board ends ${Math.round(boardBox.y + boardBox.height - box.y)}px into a ${Math.round(box.height)}px frame`);
+    check(device, '2048: board visible without scrolling', boardBox.y >= box.y && boardBox.y + boardBox.height <= box.y + box.height + 1, `board ends ${Math.round(boardBox.y + boardBox.height - box.y)}px into a ${Math.round(box.height)}px frame`);
     await board.scrollIntoViewIfNeeded();
     const state = () => frame.evaluate(() => localStorage.getItem('duvera.2048.gameState'));
     let moves = 0;
@@ -114,11 +122,26 @@ try {
     const restart = await frame.locator('.restart-button').boundingBox();
     await tap(restart.x + restart.width / 2, restart.y + restart.height / 2);
     await page.waitForTimeout(300);
+    await shoot('2048');
     check(device, '2048: tapping New Game resets score', await frame.evaluate(() => document.querySelector('.score-container').firstChild.textContent === '0'));
     check(device, '2048: no horizontal scroll', await noOverflow(frame));
 
     ({frame, box} = await open('hextris'));
     check(device, 'hextris: no horizontal scroll', await noOverflow(frame));
+    const overlap = await frame.evaluate(() => {
+      const size = 150 * settings.scale;
+      ctx.save();
+      ctx.font = size + 'px Exo';
+      const metrics = ctx.measureText('Hextris');
+      ctx.restore();
+      const x = trueCanvas.width / 2 + gdx + 6 * settings.scale;
+      const baseline = trueCanvas.height / 2.1 + gdy - 155 * settings.scale + size / 2 - 9 * settings.scale;
+      const title = {left: x - metrics.width / 2, right: x + metrics.width / 2, top: baseline - metrics.actualBoundingBoxAscent, bottom: baseline + metrics.actualBoundingBoxDescent};
+      const score = document.getElementById('highScoreInGameText').getBoundingClientRect();
+      return score.left < title.right && score.right > title.left && score.top < title.bottom && score.bottom > title.top;
+    });
+    check(device, 'hextris: high score clears the title', !overlap);
+    await shoot('hextris-start');
     const start = await frame.locator('#startBtn').boundingBox();
     await tap(start.x + start.width / 2, start.y + start.height / 2);
     await frame.waitForFunction(() => gameState === 1, null, {timeout: 3000}).catch(() => {});
@@ -130,6 +153,7 @@ try {
     await tap(box.x + box.width * 0.8, box.y + box.height * 0.6);
     await tap(box.x + box.width * 0.8, box.y + box.height * 0.6);
     const p2 = await position();
+    await shoot('hextris');
     check(device, 'hextris: tapping left side rotates', p1 === (p0 + 1) % 6, `${p0} -> ${p1}`);
     check(device, 'hextris: tapping right side rotates back', p2 === (p1 + 4) % 6, `${p1} -> ${p2}`);
     const pause = await frame.locator('#pauseBtn').boundingBox();
@@ -146,6 +170,6 @@ try {
   await browser.close();
   server.kill();
 }
-const count = status => results.filter(result => result === status).length;
-console.log(`\n${count('PASS')} passed, ${count('KNOWN')} known upstream limitations, ${count('FAIL')} failed.`);
-process.exitCode = count('FAIL') ? 1 : 0;
+const failed = results.filter(ok => !ok).length;
+console.log(`\n${results.length - failed} passed, ${failed} failed.`);
+process.exitCode = failed ? 1 : 0;

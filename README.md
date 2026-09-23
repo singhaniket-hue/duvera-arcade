@@ -31,7 +31,9 @@ npm run check
 npm run build
 ```
 
-`npm run check:mobile` drives all three games with emulated touch on a 320px phone, a Pixel 5 and a landscape iPhone (taps, swipes, pause, header layout, overflow). It needs Playwright with Chromium (`npm install --no-save playwright && npx playwright install chromium`, or a global install). Layout limits in the unchanged upstream packages are reported as `KNOWN` rather than failing.
+`npm run check:mobile` drives all three games with emulated touch on a 320px phone, a Pixel 5 and two landscape iPhones (taps, swipes, pause, header layout, overflow, board and title placement). It needs Playwright with Chromium (`npm install --no-save playwright && npx playwright install chromium`, or a global install). Set `SCREENSHOT_DIR` to save a screenshot of each game on each screen.
+
+GitHub Actions runs all three commands on every pull request and push to `master`, and uploads the screenshots as a build artifact.
 
 The build produces `dist/`, which can be hosted by any static host. Build output is not committed.
 
@@ -52,7 +54,7 @@ After deployment, add `leo.duvera.app` under the Pages project's **Custom domain
 ## Repository layout
 
 - `index.html`, `assets/`, `play.html`: arcade menu and player shell.
-- `games/clumsy-bird/`: original Clumsy Bird package, unchanged.
+- `games/clumsy-bird/`: original Clumsy Bird package, plus a small script that makes taps around the canvas count.
 - `games/2048/`: 2048, with host-appropriate attribution and separate save keys.
 - `games/hextris/`: Hextris, with legacy ads, analytics and external reporting removed.
 - `credits.html`, `THIRD_PARTY.md`: creators, licenses and integration changes.

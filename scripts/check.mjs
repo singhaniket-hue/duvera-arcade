@@ -10,7 +10,7 @@ const read = name => readFile(path.join(root, name), 'utf8');
 async function walk(dir) {
   const files = [];
   for (const entry of await readdir(path.join(root, dir), {withFileTypes: true})) {
-    if (entry.name.startsWith('.') || entry.name === 'dist') continue;
+    if (entry.name.startsWith('.') || entry.name === 'dist' || entry.name === 'node_modules') continue;
     const name = path.join(dir, entry.name);
     files.push(...(entry.isDirectory() ? await walk(name) : [name]));
   }

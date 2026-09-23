@@ -67,7 +67,7 @@
 
 // Media queries
 @mixin smaller($width) {
-  @media screen and (max-width: $width) {
+  @media screen and (max-width: $width), screen and (orientation: landscape) and (max-height: $width) {
     @content;
   }
 }
