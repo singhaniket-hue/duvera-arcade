@@ -44,14 +44,16 @@
       if (name==='hit' && game.data.steps % 5 === 0) emit('milestone');
       return audioPlay.apply(this,arguments);
     };
-    const reset = game.PlayScreen.prototype.onResetEvent;
-    game.PlayScreen.prototype.onResetEvent = function () {const result=reset.apply(this,arguments);emit('start');return result;};
-    const gameOver = game.GameOverScreen.prototype.onResetEvent;
-    game.GameOverScreen.prototype.onResetEvent = function () {
-      const result=gameOver.apply(this,arguments);
+    // melonJS seals methods on its prototypes; extend screens before game.loaded instantiates them.
+    const PlayScreen = game.PlayScreen, GameOverScreen = game.GameOverScreen;
+    game.PlayScreen = PlayScreen.extend({onResetEvent:function () {
+      const result=PlayScreen.prototype.onResetEvent.apply(this,arguments);emit('start');return result;
+    }});
+    game.GameOverScreen = GameOverScreen.extend({onResetEvent:function () {
+      const result=GameOverScreen.prototype.onResetEvent.apply(this,arguments);
       if (game.data.newHiScore && game.data.steps>0) emit('win');
       return result;
-    };
+    }});
   }
   if (gameID === '2048') {
     const Storage = LocalStorageManager;

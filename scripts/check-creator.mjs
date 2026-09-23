@@ -40,9 +40,19 @@ for(const x of [0,1])game.grid.insertTile(new c.Tile({x,y:0},16));game.move(3);a
 assert.ok(c.store.has('duvera.moosher.2048.gameState'));assert.equal(c.store.has('duvera.2048.gameState'),false);
 // Check the public melonJS save adapter with existing original scores present.
 const bird=context('?creator=moosher','/games/clumsy-bird/');vm.runInContext(registry,bird);
-bird.store.set('me.save.topSteps','99');bird.game={resources:[{name:'clumsy',src:'original.png'}],PlayScreen:function(){},GameOverScreen:function(){},data:{}};
-bird.game.PlayScreen.prototype.onResetEvent=()=>{};bird.game.GameOverScreen.prototype.onResetEvent=()=>{};bird.me={audio:{play(){}},save:{}};
+// Use melonJS's real class factory: prototype methods are deliberately read-only.
+const engine=await code('games/clumsy-bird/js/melonJS-min.js');
+const factoryStart=engine.indexOf('function(){function a(){function d(){');
+const factoryEnd=engine.indexOf('}(),me.Error=',factoryStart);
+assert.ok(factoryStart>=0&&factoryEnd>factoryStart);
+bird.me={audio:{play(){}},save:{}};
+vm.runInContext('('+engine.slice(factoryStart,factoryEnd+1)+')();',bird);
+bird.store.set('me.save.topSteps','99');
+bird.game={resources:[{name:'clumsy',src:'original.png'}],PlayScreen:bird.me.Object.extend({init(){},onResetEvent(){bird.resetCalled=true;}}),GameOverScreen:bird.me.Object.extend({init(){},onResetEvent(){}}),data:{}};
+bird.CreatorAudio={play:event=>{bird.lastReaction=event;}};
 vm.runInContext(adapter,bird);bird.me.save.add({topSteps:3});bird.me.save.topSteps=7;assert.equal(bird.store.get('me.save.topSteps'),'99');assert.equal(bird.store.get('duvera.moosher.clumsy-bird.topSteps'),'7');
+new bird.game.PlayScreen().onResetEvent();assert.equal(bird.resetCalled,true);assert.equal(bird.lastReaction,'start');
+bird.game.data.newHiScore=true;bird.game.data.steps=7;new bird.game.GameOverScreen().onResetEvent();assert.equal(bird.lastReaction,'win');
 // Check every runtime-selected asset, which HTML link scanning cannot see.
 for(const name of ['avatar.webp','flap-logo.png','flap-sprite.png',...['smile','laugh','surprise','focus','sad','win'].map(x=>'emote-'+x+'.png'),...c.ArcadeCreator.clips.map(x=>'audio/'+x.file)])assert.ok((await stat(path.join(root,'creators/moosher/media',name))).size>0);
 const sprite=await readFile(path.join(root,'creators/moosher/media/flap-sprite.png'));assert.equal(sprite.readUInt32BE(16),255);assert.equal(sprite.readUInt32BE(20),60);

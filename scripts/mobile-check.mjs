@@ -79,6 +79,7 @@ try {
     check(device, 'player: page does not scroll', await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight && document.documentElement.scrollWidth <= innerWidth));
 
     let {frame, box} = await open('clumsy-bird');
+    if (creator) await frame.evaluate(() => {window.creatorReactions=[];addEventListener('creator-reaction',event=>creatorReactions.push(event.detail.event));});
     const canvas = await frame.evaluate(() => { const r = document.querySelector('canvas').getBoundingClientRect(); return {x: r.x, y: r.y, w: r.width, h: r.height}; });
     const inside = {x: box.x + canvas.x + canvas.w / 2, y: box.y + canvas.y + canvas.h / 2};
     // Taps in the letterbox around the canvas count as taps on the game.
@@ -101,6 +102,7 @@ try {
     }
     check(device, 'clumsy-bird: no horizontal scroll', await noOverflow(frame));
     if (creator) {
+      check(device, 'creator: starting a run triggers a reaction', await frame.evaluate(() => creatorReactions.includes('start')));
       check(device, 'creator: flying sprite is selected', await frame.evaluate(() => game.resources.find(x=>x.name==='clumsy').src.includes('/creators/moosher/media/flap-sprite.png')));
       check(device, 'creator: title is personalized', await page.title() === 'Moosh Flap · Moosher Arcade');
       await page.locator('#creator-voice').tap();
