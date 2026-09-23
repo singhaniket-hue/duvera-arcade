@@ -490,6 +490,7 @@ body {
 
 #bottomContainer {
 	position:absolute;
+	left:0;
 	width:100%;
 	bottom:0px;
 }
@@ -524,4 +525,15 @@ body {
 	-webkit-transform:translate(-50%, 0%);
 	-moz-transform:translate(-50%, 0%);
 	-ms-transform:translate(-50%, 0%);
+}
+
+/* Duvera integration: on short landscape screens the canvas title reaches the top edge, so move the high score aside. */
+@media (orientation: landscape) and (max-height: 450px) {
+	#highScoreInGameText {
+		left:auto;
+		right:10px;
+		margin-left:0;
+		width:auto;
+		text-align:right;
+	}
 }

@@ -8,6 +8,7 @@
     "dev": "node scripts/serve.mjs",
     "start": "node scripts/serve.mjs",
     "check": "node scripts/check.mjs",
+    "check:mobile": "node scripts/mobile-check.mjs",
     "build": "node scripts/build.mjs"
   },
   "engines": {"node": ">=18"}

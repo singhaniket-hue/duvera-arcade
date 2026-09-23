@@ -200,8 +200,11 @@ function initialize(a) {
 	}
 }
 
-function startBtnHandler() {
-	setTimeout(function() {
+function startBtnHandler(e) {
+	// Duvera: swap to the in-game tap handler immediately; a timer here can be deferred by the
+	// browser during touch input, dropping the player's first taps. Keep this press off the body.
+	if (e) e.stopPropagation();
+	(function() {
 		if (settings.platform == "mobile") {
 			try {
 				document.body.removeEventListener('touchstart', handleTapBefore, false);
@@ -231,7 +234,7 @@ function startBtnHandler() {
 
 			document.body.addEventListener('mousedown', handleClick, false);
 		}
-	}, 5);
+	})();
 
 	if (!canRestart) return false;
 
