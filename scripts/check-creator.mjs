@@ -31,6 +31,14 @@ c.now+=100;assert.equal(c.CreatorAudio.play('lose'),true,'Loss may interrupt a l
 c.CreatorAudio.update({muted:true});c.now+=9000;assert.equal(c.CreatorAudio.play('win'),false);
 c.CreatorAudio.update({muted:false,disabled:['badhiya']});assert.equal(c.CreatorAudio.play('win'),false);
 c.CreatorAudio.update({disabled:[]});assert.equal(c.CreatorAudio.play('win'),true);
+const playingWin=c.createdAudio.at(-1);
+c.CreatorAudio.update({disabled:['badhiya']});assert.equal(playingWin.paused,true,'Disabling an active clip stops it');
+c.CreatorAudio.update({disabled:[]});c.now+=9000;assert.equal(c.CreatorAudio.play('win'),true);
+const zeroVolume=c.createdAudio.at(-1);c.CreatorAudio.update({volume:0});assert.equal(zeroVolume.paused,true);
+assert.equal(c.CreatorAudio.play('start'),false,'Zero volume blocks playback');
+c.CreatorAudio.update({volume:0.55});
+c.now+=9000;assert.equal(c.CreatorAudio.play('start'),true);
+c.document.hidden=true;for(const fn of c.listeners.visibilitychange)fn({});assert.equal(c.createdAudio.at(-1).paused,true,'Background playback stops');
 c.document.hidden=true;assert.equal(c.CreatorAudio.play('start',{preview:true,id:'hello'}),false);
 for(const file of ['grid','tile','local_storage_manager','game_manager'])vm.runInContext(await code(`games/2048/js/${file}.js`),c);
 vm.runInContext(adapter,c);

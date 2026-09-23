@@ -21,3 +21,4 @@ bower_components
 
 # Generated static build
 /dist/
+/output/

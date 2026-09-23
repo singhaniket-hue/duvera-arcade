@@ -5,7 +5,7 @@
   if (!profile) return;
   const key = 'duvera.' + profile.id + '.audio';
   let prefs = {volume:0.55, muted:false, disabled:[]};
-  let unlocked = false, current = null, lastAt = -Infinity, currentPriority = 0;
+  let unlocked = false, current = null, currentClip = null, currentPreview = false, lastAt = -Infinity, currentPriority = 0;
   const eventTimes = Object.create(null);
   function sync() {
     try {
@@ -16,14 +16,19 @@
         prefs.disabled = Array.isArray(saved.disabled) ? saved.disabled.filter(x=>typeof x==='string') : [];
       }
     } catch (_) {}
-    if (current) { current.volume = prefs.volume; if (prefs.muted) stop(); }
+    applySettings();
   }
-  function stop() { if (current) {current.pause(); current.currentTime = 0; current = null;} }
+  function stop() { if (current) {current.pause(); current.currentTime = 0; current = null;} currentClip = null; }
+  function applySettings() {
+    if (!current) return;
+    current.volume = prefs.volume;
+    if (prefs.volume === 0 || (!currentPreview && (prefs.muted || prefs.disabled.includes(currentClip)))) stop();
+  }
   function update(values) {
     prefs = {...prefs,...values};
     prefs.volume = Math.max(0,Math.min(1,Number(prefs.volume)||0));
     try {localStorage.setItem(key,JSON.stringify(prefs));} catch (_) {}
-    if (current) {current.volume = prefs.volume; if(prefs.muted) stop();}
+    applySettings();
     window.dispatchEvent(new CustomEvent('creator-audio-settings'));
   }
   function play(event, options = {}) {
@@ -35,7 +40,8 @@
     if (!options.preview && (now-(eventTimes[event] ?? -Infinity)<7000 || (now-lastAt<3500 && priority<=currentPriority))) return false;
     stop();
     const audio = new Audio(profile.assets+'audio/'+clip.file);
-    current = audio; audio.volume = prefs.volume; currentPriority=priority; lastAt=now; eventTimes[event]=now;
+    current = audio; currentClip = clip.id; currentPreview = !!options.preview;
+    audio.volume = prefs.volume; currentPriority=priority; lastAt=now; eventTimes[event]=now;
     audio.addEventListener('ended',()=>{if(current===audio)current=null;});
     audio.play().catch(()=>{if(current===audio)current=null;});
     window.dispatchEvent(new CustomEvent('creator-reaction',{detail:{id:clip.id,event}}));

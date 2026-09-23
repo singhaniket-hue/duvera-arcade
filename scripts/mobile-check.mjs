@@ -20,9 +20,9 @@ async function loadPlaywright() {
 }
 const {chromium, devices} = await loadPlaywright();
 const port = 4300 + Math.floor(Math.random() * 500);
-const base = `http://127.0.0.1:${port}/`;
-const server = spawn(process.execPath, [path.join(root, 'scripts/serve.mjs'), '--port', String(port), '--host', '127.0.0.1'], {stdio: ['ignore', 'pipe', 'inherit']});
-await new Promise(resolve => server.stdout.once('data', resolve));
+const base = process.env.TEST_BASE_URL || `http://127.0.0.1:${port}/`;
+const server = process.env.TEST_BASE_URL ? null : spawn(process.execPath, [path.join(root, 'scripts/serve.mjs'), '--port', String(port), '--host', '127.0.0.1'], {stdio: ['ignore', 'pipe', 'inherit']});
+if (server) await new Promise(resolve => server.stdout.once('data', resolve));
 
 // Set SCREENSHOT_DIR to save what each game looks like on each screen.
 const shots = process.env.SCREENSHOT_DIR && path.resolve(process.env.SCREENSHOT_DIR);
@@ -45,6 +45,8 @@ try {
     const page = await context.newPage();
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
+    page.on('response', response => {if(response.status() >= 400) errors.push(`${response.status()} ${response.url()}`);});
+    page.on('requestfailed', request => {if(request.failure()?.errorText !== 'net::ERR_ABORTED') errors.push(`${request.failure()?.errorText} ${request.url()}`);});
     const cdp = await context.newCDPSession(page);
     const touch = (type, points) => cdp.send('Input.dispatchTouchEvent', {type, touchPoints: points});
     // A real fingertip stays down for tens of milliseconds; melonJS polls input once per frame.
@@ -55,7 +57,7 @@ try {
       await touch('touchEnd', []);
     };
     const open = async id => {
-      await page.goto(`${base}play.html?game=${id}${creator ? "&creator=" + creator : ""}`);
+      await page.goto(`${base}play.html?game=${id}&creator=${creator || 'default'}`);
       const frame = await (await page.waitForSelector('#game-frame')).contentFrame();
       await frame.waitForLoadState('load');
       await page.waitForTimeout(1500);
@@ -64,7 +66,7 @@ try {
     const shoot = async name => { if (shots) await page.screenshot({path: path.join(shots, `${device.replace(/\W+/g, '-').toLowerCase()}-${name}.png`), scale: 'css'}); };
     const noOverflow = frame => frame.evaluate(() => document.documentElement.scrollWidth <= innerWidth);
 
-    await page.goto(creator ? `${base}creators/${creator}/` : base);
+    await page.goto(creator ? `${base}creators/${creator}/` : `${base}?creator=default`);
     check(device, 'menu: no horizontal scroll', await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     await page.locator('.game-card, .creator-card').first().tap();
     await page.waitForURL(/game=/);
@@ -182,7 +184,7 @@ try {
   }
 } finally {
   await browser.close();
-  server.kill();
+  server?.kill();
 }
 const failed = results.filter(ok => !ok).length;
 console.log(`\n${results.length - failed} passed, ${failed} failed.`);

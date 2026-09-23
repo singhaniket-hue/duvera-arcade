@@ -44,12 +44,21 @@
       if (name==='hit' && game.data.steps % 5 === 0) emit('milestone');
       return audioPlay.apply(this,arguments);
     };
+    // The game's M key must also stop a creator clip that is already playing.
+    const audioDisable = me.audio.disable;
+    me.audio.disable = function () {
+      window.CreatorAudio?.stop();
+      return audioDisable.apply(this,arguments);
+    };
     // melonJS seals methods on its prototypes; extend screens before game.loaded instantiates them.
     const PlayScreen = game.PlayScreen, GameOverScreen = game.GameOverScreen;
     game.PlayScreen = PlayScreen.extend({onResetEvent:function () {
       const result=PlayScreen.prototype.onResetEvent.apply(this,arguments);emit('start');return result;
     }});
     game.GameOverScreen = GameOverScreen.extend({onResetEvent:function () {
+      // Seed a zero best before the upstream first-run initialization so a first
+      // successful run is recognized as a new best, too.
+      me.save.add({topSteps:0});
       const result=GameOverScreen.prototype.onResetEvent.apply(this,arguments);
       if (game.data.newHiScore && game.data.steps>0) emit('win');
       return result;

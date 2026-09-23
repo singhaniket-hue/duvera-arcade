@@ -8,6 +8,7 @@ const games = {
 const id = new URLSearchParams(window.location.search).get('game');
 if (Object.prototype.hasOwnProperty.call(games, id)) {
   const creator = window.ArcadeCreator;
+  if (!creator) document.querySelector('.back-link').href = './?creator=default';
   const game = {...games[id]};
   if (creator) {
     game.name = creator.titles[id];

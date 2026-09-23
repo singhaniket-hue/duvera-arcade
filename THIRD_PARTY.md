@@ -33,6 +33,8 @@ The menu, player shell, build/server scripts and verification scripts are distri
 
 ## Optional Moosher edition (2026-09-23)
 
+Follow-up fixes (2026-09-24): generic navigation retains its explicit creator opt-out; creator audio stops immediately on volume zero, disabling the active in-game clip, or Clumsy Bird's existing mute control. The creator adapter initializes the first best-score baseline so a first successful Flap run emits its new-best reaction. Upstream gameplay and the immediate Hextris touch-handler switch remain intact.
+
 The three game HTML entrypoints load optional creator adapters. They are no-ops for the default edition. `assets/creator-game.js` switches Clumsy Bird sprite/title resources, provides a namespaced public `me.save` adapter, and hooks round/score events. For 2048 it changes the heading, scoped saves and reaction hooks; for Hextris it changes canvas title text, scoped storage and reaction hooks. The compiled melonJS engine and gameplay bundles are unchanged. Additional CSS, a creator menu, opt-in profile routing, audio controls and an audition page are provided by Duvera.
 
 Creator artwork was generated with Higgsfield from the public channel photo. Four short audio candidates were extracted from the creator’s edited livestream highlights. These media are **not covered by the game code licenses**; source URLs, timestamps, generation IDs and unresolved speaker/audio review are documented in `creators/moosher/SOURCES.md`. The edition is labeled fan-made and does not claim endorsement.

@@ -34,6 +34,8 @@ jobs:
         env:
           CREATOR_EDITION: moosher
           SCREENSHOT_DIR: moosher-screenshots
+      - name: Desktop gameplay, persistence and audio checks
+        run: npm run check:desktop
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -42,4 +44,5 @@ jobs:
           path: |
             mobile-screenshots
             moosher-screenshots
+            output/playwright
           if-no-files-found: ignore

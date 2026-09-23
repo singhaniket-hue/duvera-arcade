@@ -37,7 +37,7 @@ GitHub Actions runs all three commands on every pull request and push to `master
 
 The build produces `dist/`, which can be hosted by any static host. Build output is not committed.
 
-## Cloudflare Pages (deployment pending)
+## Cloudflare Pages
 
 Connect `singhaniket-hue/duvera-arcade` through **Pages → Import an existing Git repository**. Use:
 
@@ -49,7 +49,7 @@ Connect `singhaniket-hue/duvera-arcade` through **Pages → Import an existing G
 | Build output directory | `dist` |
 | Root directory | Repository root |
 
-After deployment, add `leo.duvera.app` under the Pages project's **Custom domains** and complete Cloudflare's DNS setup. Domain registration at Namecheap does not require a change if Cloudflare already manages the zone.
+These settings describe a generic deployment. Preserve any existing `leo.duvera.app` site. For the Moosher deployment, use a separate `duvera-moosher` Pages project, build the tested `creator/moosher` revision while PR #2 remains unmerged, and add **moosher.duvera.app** through that project's **Custom domains**. A direct upload of the contents of `dist` is also supported; it does not automatically deploy later Git commits. Domain registration at Namecheap does not require a change because Cloudflare manages the zone.
 
 ## Repository layout
 
@@ -78,7 +78,10 @@ Verification:
 
 ```sh
 npm run check:creator
+npm run check:desktop
 CREATOR_EDITION=moosher SCREENSHOT_DIR=moosher-screenshots npm run check:mobile
 ```
 
 CI runs both the original and Moosher mobile suite. The creator checks cover registry routing, opt-out, audio gating, cooldowns, mute/disabled settings, real 2048 merges, isolated save keys, required assets and sprite dimensions. Automated checks cannot approve the voice, source speaker or emotional timing; use the sound-review page and play the game yourself.
+
+The desktop suite checks keyboard/mouse play, retries, persistence, audio playback and navigation. Rare score/end states use deterministic fixtures through the real game logic. Both browser suites accept `TEST_BASE_URL=https://moosher.duvera.app/` to check the deployed site and `SCREENSHOT_DIR` to save evidence. The mobile suite defaults to the generic edition; set `CREATOR_EDITION=moosher` for the personalized edition. Touch tests emulate Chromium devices, rather than claiming physical iOS/Safari coverage.

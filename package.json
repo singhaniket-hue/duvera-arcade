@@ -9,6 +9,7 @@
     "start": "node scripts/serve.mjs",
     "check": "node scripts/check.mjs",
     "check:mobile": "node scripts/mobile-check.mjs",
+    "check:desktop": "node scripts/desktop-check.mjs",
     "build": "node scripts/build.mjs",
     "check:creator": "node scripts/check-creator.mjs"
   },
