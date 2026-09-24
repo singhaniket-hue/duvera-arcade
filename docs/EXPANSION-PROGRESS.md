@@ -1,6 +1,7 @@
 # Arcade expansion progress
 
 ## Current handoff — 2026-09-24
+- PR #3 defect follow-up: fixes and its credited test suite are on `fix/party-edge-cases`, based on verified `creator/moosher` commit `de423c0`. See [the fix report](PARTY-FIXES.md). All eleven reported issues reproduced and addressed locally; production is unchanged. Merge through review into `creator/moosher` before any later preview/release.
 - LIVE: Stack, Four solo (easy/normal bots), Dash, Smash, plus the three existing games.
 - Production source: `creator/moosher` at `24b90eaa7c56f452182398662cbffcc7b9a0259d`. Documentation/screenshot commits after this revision are not automatically deployed.
 - Four online: implemented and tested against the local Worker, NOT deployed. Cloudflare CLI OAuth renewal requires owner consent; the previous attempt expired. Do not reuse the stale consent page. Start a fresh narrowly scoped login when the owner is available, then follow `multiplayer/README.md` through preview and public two-context tests before enabling online mode.

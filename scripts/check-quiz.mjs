@@ -21,6 +21,8 @@ for(let i=1;i<=10;i++){
 }
 check('ten questions end in final standings',()=>{assert.equal(r.phase,'finished');assert.equal(a.score,10000);assert.equal(b.score,7500);});act(a,'start');check('rematch resets all scores',()=>assert.equal(a.score+b.score,0));
 now=r.deadline;check('deadline wins against late input',()=>{assert.throws(()=>act(a,'answer',{choice:r.quiz[0].correct}),/closed/);assert.equal(r.phase,'quizReveal');assert.equal(a.score,0);});
-depart(r,a.id,now,true);check('host departure transfers control',()=>assert.equal(r.host,b.id));const c=addPlayer;check('active room rejects late seats',()=>assert.throws(()=>c(r,'c','C',0,now),/locked/));
+check('active room rejects late seats',()=>assert.throws(()=>addPlayer(r,'c','C',0,now),/locked/));
+depart(r,a.id,now,true);check('host departure transfers control',()=>assert.equal(r.host,b.id));
+check('departure below two finishes and admits replacement seats',()=>{assert.equal(r.phase,'finished');assert.equal(r.locked,false);assert.ok(addPlayer(r,'c','C',0,now));});
 const p=new Practice(practice);p.paused=true;p.update(50000);check('practice pause freezes timer',()=>assert.equal(p.remaining,20000));p.paused=false;p.update(20001);check('practice timeout reveals without scoring',()=>{assert.equal(p.phase,'reveal');assert.equal(p.score,0);});p.reset();for(let i=0;i<10;i++){p.update(1000);p.finish(practice[i].correct);if(i<9)p.next();}check('practice full match and retry',()=>{assert.equal(p.phase,'finished');assert.equal(p.score,9750);p.reset();assert.equal(p.score,0);assert.equal(p.index,0);});
 console.log(`${checks} Quiz rules, scoring and practice checks passed.`);

@@ -120,4 +120,6 @@ Open `http://127.0.0.1:4173/creators/moosher/`. Share the generated invite betwe
 
 `npm run check:multiplayer` starts an isolated local Worker, runs Four/Draw/Quiz rules and browser suites, and stops its own process tree. Test-only SQLite state and logs are retained under ignored `output/room-test-*`. It does not deploy anything or relax production limits. Existing `check:four`, `check:draw` and `check:quiz` accept an already-running Worker through `ROOM_ENDPOINT`. Install the repository's Playwright version and Chromium first as described above.
 
+`npm run check:party-rigor` runs the additional departure/recovery, secret-word, Unicode, payload/storage, eight-player protocol and phone regressions from PR #3. CI also runs these checks with 6,000 fuzzed games of 400 steps. In PowerShell, use `$env:FUZZ_GAMES='6000'` before the command to match CI. Do not edit Worker source while a suite is running: its development server reloads and disconnects sockets.
+
 [Party architecture, constraints and next steps](multiplayer/README.md) · [Question provenance](docs/QUIZ-SOURCES.md) · [Progress](docs/EXPANSION-PROGRESS.md).

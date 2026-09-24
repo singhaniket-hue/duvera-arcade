@@ -1,5 +1,6 @@
 import {createParty,addPlayer,partyAction,partySnapshot,advance,depart,connected} from './party-core.mjs';
 const json=(x,status=200)=>new Response(JSON.stringify(x),{status,headers:{'Content-Type':'application/json'}});
+const encoder=new TextEncoder();
 export class PartyRoom {
  constructor(ctx){this.ctx=ctx;this.room=null;ctx.blockConcurrencyWhile(async()=>{this.room=await ctx.storage.get('party');});}
  async fetch(req){
@@ -24,30 +25,36 @@ export class PartyRoom {
  async handle(ws,data){
   const now=Date.now(),a=ws.deserializeAttachment(),r=this.room;
   if(!r||now>=r.expires)return ws.close(1000,'Room expired');
-  if(typeof data!=='string'||data.length>16384)return ws.close(1009,'Message too large');
+  const bytes=typeof data==='string'?encoder.encode(data).byteLength:Infinity;
+  if(bytes>65536)return ws.close(1009,'Message too large');
   if(now-a.window>=1000){a.count=0;a.window=now;}a.count++;ws.serializeAttachment(a);if(a.count>20)return ws.close(1008,'Input rate exceeded');
-  let m;try{m=JSON.parse(data);}catch{return ws.send(JSON.stringify({type:'error',message:'Invalid message.'}));}if(!m||typeof m!=='object')return;
+  const large=bytes>16384;
+  let m;try{m=JSON.parse(data);}catch{if(large)return ws.close(1009,'Message too large');return ws.send(JSON.stringify({type:'error',message:'Invalid message.'}));}if(!m||typeof m!=='object'){if(large)return ws.close(1009,'Message too large');return;}
+  // Only an authenticated host's custom-pack command gets the larger envelope.
+  // 60 words plus six aliases fit even with Unicode text. All gameplay stays 16 KiB.
+  if(large&&!(a.seat&&a.seat===r.host&&m.type==='pack'&&r.kind==='draw'))return ws.close(1009,'Message too large');
   if(!a.seat){
+   if(now>=a.opened+10000)return ws.close(1008,'Authentication timed out');
    if(m.type!=='auth'||typeof m.token!=='string')return ws.close(1008,'Authenticate first');const p=r.players.find(x=>x.token===m.token);if(!p)return ws.close(1008,'Invalid session token');
    for(const old of this.ctx.getWebSockets())if(old!==ws&&old.deserializeAttachment()?.seat===p.id){old.serializeAttachment({...old.deserializeAttachment(),seat:null});old.close(1000,'Seat opened in another tab');}
-   a.seat=p.id;ws.serializeAttachment(a);p.offline=null;r.touched=now;r.revision++;await this.save();this.broadcast(true);return;
+   a.seat=p.id;ws.serializeAttachment(a);p.offline=null;r.touched=now;r.revision++;await this.save();this.broadcast();ws.send(JSON.stringify(partySnapshot(r,a.seat,now,true)));return;
   }
-  if(m.type==='sync'){if(advance(r,now)){await this.save();this.broadcast(true);}else ws.send(JSON.stringify(partySnapshot(r,a.seat,now,true)));return;}
-  const oldVersion=r.canvasVersion;
-  try{partyAction(r,a.seat,m,now);}catch(e){ws.send(JSON.stringify({type:'error',message:e.message}));await this.save();this.broadcast(true);return;}
+  const oldVersion=r.canvasVersion,oldRevision=r.revision;
+  if(m.type==='sync'){if(advance(r,now)){await this.save();this.broadcast(oldVersion!==r.canvasVersion);}ws.send(JSON.stringify(partySnapshot(r,a.seat,now,true)));return;}
+  try{partyAction(r,a.seat,m,now);}catch(e){ws.send(JSON.stringify({type:'error',message:e.message}));if(r.revision!==oldRevision){await this.save();this.broadcast(oldVersion!==r.canvasVersion);}return;}
   for(const s of this.ctx.getWebSockets())if(s.deserializeAttachment()?.seat&&!r.players.some(p=>p.id===s.deserializeAttachment().seat)){s.serializeAttachment({...s.deserializeAttachment(),seat:null});s.close(1000,'You left or were removed from the room');}
   await this.save();
   if(m.type==='stroke'&&oldVersion===r.canvasVersion){const stroke=r.drawing.find(s=>s.id===m.stroke);for(const s of this.ctx.getWebSockets())if(s.deserializeAttachment()?.seat)s.send(JSON.stringify({type:'ink',canvasVersion:r.canvasVersion,stroke:m.stroke,seq:m.seq,points:m.points,color:stroke.color,size:stroke.size}));}
-  else this.broadcast(true);
+  else this.broadcast(oldVersion!==r.canvasVersion);
  }
  async webSocketClose(ws){await this.disconnected(ws);}
  async webSocketError(ws){await this.disconnected(ws);}
- async disconnected(ws){const a=ws.deserializeAttachment();ws.serializeAttachment({...a,seat:null});if(a.seat&&this.room&&!this.ctx.getWebSockets().some(s=>s.deserializeAttachment()?.seat===a.seat)){depart(this.room,a.seat,Date.now());await this.save();this.broadcast(true);}}
+ async disconnected(ws){const a=ws.deserializeAttachment();ws.serializeAttachment({...a,seat:null});if(a.seat&&this.room&&!this.ctx.getWebSockets().some(s=>s.deserializeAttachment()?.seat===a.seat)){depart(this.room,a.seat,Date.now());await this.save();this.broadcast();}}
  async alarm(){
-  const now=Date.now(),r=this.room;if(!r)return;
+  const now=Date.now(),r=this.room;if(!r)return;const oldRevision=r.revision,oldVersion=r.canvasVersion;
   for(const s of this.ctx.getWebSockets()){const a=s.deserializeAttachment();if(!a.seat&&now>=a.opened+10000)s.close(1008,'Authentication timed out');}
   if(now>=r.expires||(!connected(r).length&&now-r.touched>=1800000)){for(const s of this.ctx.getWebSockets())s.close(1000,'Room expired');await this.ctx.storage.deleteAll();this.room=null;return;}
   for(const p of [...r.players])if(p.offline!==null&&now>=p.offline+60000)depart(r,p.id,now,true);
-  advance(r,now);await this.save();this.broadcast(true);
+  advance(r,now);if(r.revision!==oldRevision){await this.save();this.broadcast(oldVersion!==r.canvasVersion);}else await this.schedule();
  }
 }
