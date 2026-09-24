@@ -1,5 +1,7 @@
 # Cloudflare release — 2026-09-24
 
+This records the nine-game multiplayer release. A later [audio-submission release](AUDIO-SUBMISSIONS-RELEASE.md) adds the private review inbox; game code and room services remain unchanged.
+
 All nine games are live at https://moosher.duvera.app. The six-game expansion queue is complete; no completed game is waiting for deployment.
 
 | Addition | Public link | Modes |

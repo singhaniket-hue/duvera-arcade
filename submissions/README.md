@@ -1,5 +1,7 @@
 # Private audio submission inbox
 
+Live release: [URLs, exact versions, hosted verification and rollback](../docs/AUDIO-SUBMISSIONS-RELEASE.md).
+
 Visitors submit a short candidate at `/creators/moosher/submit-audio.html`. The owner opens `/creators/moosher/review-submissions.html` with a private review key to listen, approve for later, download audio/source notes, or reject/delete. **Approval does not publish or modify game configuration.** All existing game audio and controls remain unchanged.
 
 ## Isolation and bounds
@@ -13,11 +15,11 @@ This is a separate `duvera-arcade-submissions` Worker with one SQLite-backed `Au
 - Metadata lists and binary downloads require the owner bearer key. The private key is a Worker secret, never embedded in static files. Authorization is checked before touching storage; missing keys fail closed. The review page retains the key in memory only and clears it, fetched audio and private content on lock/page exit. Do not enter it on untrusted preview builds.
 - No public list, playback, moderation endpoint or automatic game import. Safe text rendering, bounded bodies, prepared SQL bindings, restrictive CORS, no-store responses and no URL credentials. Downloads use generated filenames and source-note JSON. Public forms contain no credential.
 
-The Free SQLite Durable Object limits currently include 1 GiB per object and 5 GB account storage, shared request/write allowances, and a 2 MB row limit. A 1 MiB file fits with metadata. This queue adds low daily write volume relative to continuous multiplayer drawing, but all account workloads share quotas. No guarantee of uninterrupted Free service; exhaustion produces a retry message. Sources checked 2026-09-24: [limits](https://developers.cloudflare.com/durable-objects/platform/limits/), [pricing](https://developers.cloudflare.com/durable-objects/platform/pricing/), [recovery/storage](https://developers.cloudflare.com/durable-objects/api/sqlite-storage-api/).
+The Free SQLite Durable Object limits currently include 1 GB per object and 5 GB account storage, shared request/write allowances, and a 2 MB row limit. A 1 MiB file fits with metadata. This queue adds low daily write volume relative to continuous multiplayer drawing, but all account workloads share quotas. No guarantee of uninterrupted Free service; exhaustion produces a retry message. Sources checked 2026-09-24: [limits](https://developers.cloudflare.com/durable-objects/platform/limits/), [pricing](https://developers.cloudflare.com/durable-objects/platform/pricing/), [recovery/storage](https://developers.cloudflare.com/durable-objects/api/sqlite-storage-api/).
 
 ## Local development and tests
 
-Install the existing Worker toolchain with `npm ci --prefix multiplayer`, root Playwright 1.56.1 and Chromium. `npm run check:submissions` starts isolated Wrangler/static servers, runs byte/security/expiry/rate tests and desktop/320px/landscape upload-review-download-delete flows, and stops only its own processes. Tests use temporary generated keys and ignored `output/submission-test-*` state. CI runs the same suite.
+Use Node.js 22 or newer for the SQLite test harness. Install the existing Worker toolchain with `npm ci --prefix multiplayer`, root Playwright 1.56.1 and Chromium. `npm run check:submissions` starts isolated Wrangler/static servers, runs byte/security/expiry/rate tests and desktop/320px/landscape upload-review-download-delete flows, and stops only its own processes. Tests use temporary generated keys and ignored `output/submission-test-*` state. CI runs the same suite.
 
 For manual work, supply `ADMIN_KEY` through an ignored `submissions/.dev.vars` file, run `node multiplayer/node_modules/wrangler/bin/wrangler.js dev --config submissions/wrangler.jsonc --port 8788`, and start the static server with `SUBMISSION_ENDPOINT=http://127.0.0.1:8788`. PowerShell: `$env:SUBMISSION_ENDPOINT='http://127.0.0.1:8788'` then `npm start`. Never put a production key in a test fixture.
 
