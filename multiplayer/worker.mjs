@@ -1,4 +1,5 @@
 import {emptyBoard,move,result} from '../games/four/rules.mjs';
+export {PartyRoom} from './party-room.mjs';
 const TTL=24*60*60*1000,IDLE=30*60*1000,GRACE=60000;
 const token=()=>crypto.randomUUID()+crypto.randomUUID();
 function json(body,status=200,origin=''){return new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store',...(origin?{'Access-Control-Allow-Origin':origin,'Vary':'Origin'}:{})}});}
@@ -9,13 +10,17 @@ export default {async fetch(req,env){
  if(req.method==='OPTIONS')return new Response(null,{headers:{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Methods':'POST, GET, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Access-Control-Max-Age':'600','Vary':'Origin'}});
  const url=new URL(req.url);
  try{
-  if(req.method==='POST'&&url.pathname==='/rooms'){
+  const party=url.pathname.match(/^\/party\/(draw)\/rooms(?:\/([a-f0-9-]{36})\/(join|socket))?$/);
+  if(req.method==='POST'&&(url.pathname==='/rooms'||(party&&!party[2]))){
    // One tiny SQLite gate per hashed IP bounds room creation without storing raw addresses.
    const ip=req.headers.get('CF-Connecting-IP')||'local';const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(ip));const hash=Array.from(new Uint8Array(digest)).map(n=>n.toString(16).padStart(2,'0')).join('');
    const gate=env.ROOMS.get(env.ROOMS.idFromName('gate:'+hash));const permitted=await gate.fetch('https://room/gate',{method:'POST'});
    if(!permitted.ok)return json({error:'Room creation limit reached. Try later or play solo.'},429,origin);
-   const id=crypto.randomUUID(),room=env.ROOMS.get(env.ROOMS.idFromName(id));const response=await room.fetch('https://room/create',{method:'POST'});return json({...await response.json(),room:id},response.status,origin);
+   const id=crypto.randomUUID(),binding=party?env.PARTIES:env.ROOMS,room=binding.get(binding.idFromName(id));
+   let body;if(party){const raw=await req.text();if(raw.length>1024)return json({error:'Request too large.'},413,origin);let input;try{input=JSON.parse(raw);}catch{return json({error:'Invalid request.'},400,origin);}body=JSON.stringify({...input,kind:party[1]});}
+   const response=await room.fetch('https://room/create',{method:'POST',body});return json({...await response.json(),room:id},response.status,origin);
   }
+  if(party&&party[2]){const response=await env.PARTIES.get(env.PARTIES.idFromName(party[2])).fetch(new Request('https://room/'+party[3],req));if(response.status===101)return response;return json(await response.json(),response.status,origin);}
   const match=url.pathname.match(/^\/rooms\/([a-f0-9-]{36})\/(join|socket)$/);
   if(!match)return json({error:'Unknown room route.'},404,origin);
   const response=await env.ROOMS.get(env.ROOMS.idFromName(match[1])).fetch(new Request('https://room/'+match[2],req));

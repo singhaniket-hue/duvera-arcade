@@ -50,3 +50,7 @@ Original GPL-3.0 runner mechanics, procedural scenery/body illustration and UI. 
 
 ## Duvera Smash
 Original GPL-3.0 physics, five level patterns, power-ups and canvas drawing code created for this arcade. No proprietary levels, branding, artwork or third-party game implementation were copied. Creator reactions reuse the existing separately attributed media.
+
+## Original Draw and party infrastructure
+
+Draw, the shared party client/Worker, and the English/Romanized Hindi word packs are original Duvera implementations under GPL-3.0. Existing creator artwork and clips retain their separate provenance and media-rights notices above. No proprietary game assets, word lists or source code were imported.

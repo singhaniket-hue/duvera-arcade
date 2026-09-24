@@ -1,7 +1,7 @@
 /* Shared creator configuration, safe scores and voice UI for original Duvera games. GPL-3.0. */
 export function setupGame(id, defaultTitle) {
   const profile=window.ArcadeCreator;
-  const theme=profile?.games?.[id] || {};
+  const theme=profile?.games?.[id] || (['draw','quiz'].includes(id)?profile?.party:null) || {};
   const title=profile?.titles?.[id] || defaultTitle;
   document.title=title+' · Duvera Arcade'; document.querySelector('h1').textContent=title;
   const home=document.querySelector('.home');home.href=profile?.home || '../../?creator=default';

@@ -61,3 +61,12 @@ Representative screenshots: `docs/screenshots/expansion/` (desktop/phone for all
 Rollback: in Cloudflare Pages → duvera-moosher → Deployments, roll back to the previous production deployment containing c28d197 (Dash release). Alternatively re-upload the retained, previously verified `D:\Work\duvera-arcade\output\dash-release.zip` as Production. It removes Smash while retaining Stack, Four solo, Dash and the original three games. `smash-release.zip` retains the current build. Verify `/deployment.json` after rollback; do not rebuild a ZIP from a later checkout or modify DNS. No Worker migration is deployed to roll back.
 
 Current production deployment ID: `0097dfa6-9968-4a55-8ccb-d286fbca75c8`. Verified rollback deployment ID: `38f8a9f7-e032-4d73-8b90-41559f338364`; its immutable URL https://38f8a9f7.duvera-moosher.pages.dev/deployment.json confirms c28d197. Cloudflare's direct-upload "main" source label is provider metadata, not the Git branch; use the deployed manifest above.
+
+## Draw — locally implemented, not deployed (2026-09-24)
+User confirms deployed solo games work after manual playtesting; requested Draw and Quiz implementation/local testing only. Public production remains 24b90ea.
+
+Draw adds original 3–8-player private rooms, three secret choices, 75-second rounds, server scoring/aliases, fair one-turn-per-player rotation, rematch, six existing avatars, mouse/touch strokes, palette/brush/eraser/undo/clear, English/Hindi/custom packs, host lock/kick/skip, reconnect grace and host transfer. Streamer mode explicitly requires hiding the broadcast capture before revealing the secret.
+
+Validation: 20 rules/privacy cases, 11 actual room-method lifecycle/security cases, 30 independent-browser checks, static/creator checks and build. Browser scenarios include full three-player rotation, duplicate/stale/unauthorized inputs, secret isolation, touch drawing, 320px and short landscape, refresh/host departure, disabled storage, kick and ninth-player rejection. Fake-clock tests cover deadlines, hibernation restore and expiry; no hosted latency/quota behavior claimed. Screenshots: output/playwright/draw/.
+
+Next: implement and locally test Quiz Party using this bounded room service. No production release authorized by this follow-up.

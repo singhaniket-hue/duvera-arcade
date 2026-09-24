@@ -13,6 +13,9 @@ createServer(async (req, res) => {
   if (!['GET', 'HEAD'].includes(req.method)) {res.writeHead(405); return res.end();}
   try {
     const requestPath = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+    // Local multiplayer preview only; the built room-config.js remains unchanged.
+    if(requestPath==='/assets/room-config.js'&&process.env.ROOM_ENDPOINT){res.writeHead(200,{'Content-Type':'text/javascript','Cache-Control':'no-store'});return res.end('window.ArcadeRooms={endpoint:'+JSON.stringify(process.env.ROOM_ENDPOINT)+'};');}
+    if(/^\/(?:multiplayer|node_modules|output|scripts)(?:\/|$)/.test(requestPath)){res.writeHead(404);return res.end('Not found');}
     if (requestPath.split('/').some(p => p.startsWith('.') && p !== '')) {res.writeHead(404); return res.end('Not found');}
     let file = path.resolve(root, '.' + requestPath);
     if (file !== path.resolve(root) && !file.startsWith(root)) {res.writeHead(403); return res.end();}

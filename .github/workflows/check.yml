@@ -49,6 +49,7 @@ jobs:
             sleep 1
           done
           npm run check:four
+          npm run check:draw
       - name: Dash mechanics and browser checks
         run: npm run check:dash
       - name: Smash mechanics and browser checks
