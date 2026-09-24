@@ -1,6 +1,7 @@
 /* Duvera Arcade player shell. GPL-3.0. */
 'use strict';
 const games = {
+  'stack': {name:'Stack',path:'games/stack/',controls:'Space, click or tap to drop · P to pause · M for voice'},
   'clumsy-bird': {name: 'Clumsy Bird', path: 'games/clumsy-bird/', controls: 'Space, click or tap to fly · M to mute'},
   '2048': {name: '2048', path: 'games/2048/', controls: 'Arrow keys or swipe to slide · R to restart'},
   'hextris': {name: 'Hextris', path: 'games/hextris/', controls: '← → or tap either side to rotate · ↓ to speed up · P to pause'}
@@ -26,14 +27,14 @@ if (Object.prototype.hasOwnProperty.call(games, id)) {
   const focusButton = document.getElementById('focus-game');
   const fullscreenButton = document.getElementById('fullscreen');
   const status = document.getElementById('player-status');
-  document.title = game.name + (creator ? ' · Moosher Arcade' : ' · Duvera Arcade');
+  document.title = game.name + (creator ? ' · '+creator.name+' Arcade' : ' · Duvera Arcade');
   document.getElementById('game-title').textContent = game.name;
   document.getElementById('game-controls').textContent = game.controls;
   document.getElementById('player-error').hidden = true;
   frame.title = game.name + ' game';
   frame.hidden = false;
   frame.addEventListener('load', () => { frame.contentWindow.focus(); });
-  frame.src = game.path + (creator ? '?creator=moosher' : '?creator=default');
+  frame.src = game.path + (creator ? '?creator='+encodeURIComponent(creator.id) : '?creator=default');
   focusButton.hidden = false;
   focusButton.addEventListener('click', () => { frame.contentWindow.focus(); });
   if (document.fullscreenEnabled) {

@@ -72,7 +72,7 @@ Open `/creators/moosher/` for the fan-made edition of @Moosherr. It includes Moo
 
 Each player route also accepts `&creator=moosher`. Original routes remain unchanged; `?creator=default` explicitly opts out on a creator hostname. Once that hostname is connected to the static deployment, `moosher.duvera.app` or `moosherr.duvera.app` opens the creator edition automatically. This code does not create DNS records or deploy the website.
 
-Four audio candidates have been cut from automatic-caption timestamps, totaling 7.85 seconds. They require a human listening review. Laughter, crying and shouting are still unsourced; none is fabricated or cloned. See [source and review notes](creators/moosher/SOURCES.md). Disable individual clips or change voice volume on the review page; the player header mutes reactions. Reaction cooldowns prevent a voice clip on every tap, and the M key in Moosh Flap also suppresses reactions. Each edition keeps separate saved scores.
+Four audio candidates have been cut from automatic-caption timestamps, totaling 7.85 seconds. The site owner has confirmed manual playback review; new game event mappings still need a brief playtest. Laughter, crying and shouting are still unsourced; none is fabricated or cloned. See [source and review notes](creators/moosher/SOURCES.md). Disable individual clips or change voice volume on the review page; the player header mutes reactions. Reaction cooldowns prevent a voice clip on every tap, and the M key in Moosh Flap also suppresses reactions. Each edition keeps separate saved scores.
 
 Verification:
 
@@ -85,3 +85,11 @@ CREATOR_EDITION=moosher SCREENSHOT_DIR=moosher-screenshots npm run check:mobile
 CI runs both the original and Moosher mobile suite. The creator checks cover registry routing, opt-out, audio gating, cooldowns, mute/disabled settings, real 2048 merges, isolated save keys, required assets and sprite dimensions. Automated checks cannot approve the voice, source speaker or emotional timing; use the sound-review page and play the game yourself.
 
 The desktop suite checks keyboard/mouse play, retries, persistence, audio playback and navigation. Rare score/end states use deterministic fixtures through the real game logic. Both browser suites accept `TEST_BASE_URL=https://moosher.duvera.app/` to check the deployed site and `SCREENSHOT_DIR` to save evidence. The mobile suite defaults to the generic edition; set `CREATOR_EDITION=moosher` for the personalized edition. Touch tests emulate Chromium devices, rather than claiming physical iOS/Safari coverage.
+
+## Original additions
+
+Stack (`/play.html?game=stack&creator=moosher`, or `/games/stack/?creator=moosher`) is an original, static timing game. Tap, click or press Space to drop; P pauses, M mutes voice. Overhang is trimmed, perfect placements build a streak, and best height is saved separately per creator. Hiding the page pauses the run until Resume.
+
+Run `npm run check:stack` for deterministic mechanics and desktop/touch browser tests. The suite supports `TEST_BASE_URL` and `SCREENSHOT_DIR`. Precision edge cases and high towers use documented deterministic fixtures, with actual buttons/keyboard/touch driving the browser integration.
+
+Release status and rollback: [expansion progress](docs/EXPANSION-PROGRESS.md).

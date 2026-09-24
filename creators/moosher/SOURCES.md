@@ -42,3 +42,6 @@ Original game licenses are in their game directories. The extracted creator audi
 3. Play each game on a phone and desktop. Listen for delayed reactions, overlap, harsh loudness and repetition.
 4. Test Voice on/off, volume zero, individual clip disable, background-tab silence, and M in Moosh Flap.
 5. Replace an audio file under the same filename to keep its mapping, or edit `assets/creator-profile.js` for new clips and timestamps. Update this document whenever a source changes.
+
+## Owner review update — 2026-09-24
+The site owner confirms manual gameplay review of the existing four clips. They are retained unchanged. Earlier pending-review statements describe initial extraction status. New game event mappings should still receive a brief human playtest.

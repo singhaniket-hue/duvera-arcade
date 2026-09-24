@@ -6,8 +6,10 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const option = name => {const i = process.argv.indexOf(name); return i < 0 ? undefined : process.argv[i + 1];};
 const port = Number(option('--port') || process.env.PORT || 4173);
 const host = option('--host') || '0.0.0.0';
+// ES modules used by original Duvera games.
 const types = {'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json','.webmanifest':'application/manifest+json','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.ico':'image/x-icon','.webp':'image/webp','.woff':'font/woff','.otf':'font/otf','.ttf':'font/ttf','.eot':'application/vnd.ms-fontobject','.mp3':'audio/mpeg','.ogg':'audio/ogg','.wav':'audio/wav','.md':'text/plain; charset=utf-8'};
 createServer(async (req, res) => {
+  types['.mjs']='text/javascript; charset=utf-8';
   if (!['GET', 'HEAD'].includes(req.method)) {res.writeHead(405); return res.end();}
   try {
     const requestPath = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);

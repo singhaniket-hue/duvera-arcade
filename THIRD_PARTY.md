@@ -38,3 +38,6 @@ Follow-up fixes (2026-09-24): generic navigation retains its explicit creator op
 The three game HTML entrypoints load optional creator adapters. They are no-ops for the default edition. `assets/creator-game.js` switches Clumsy Bird sprite/title resources, provides a namespaced public `me.save` adapter, and hooks round/score events. For 2048 it changes the heading, scoped saves and reaction hooks; for Hextris it changes canvas title text, scoped storage and reaction hooks. The compiled melonJS engine and gameplay bundles are unchanged. Additional CSS, a creator menu, opt-in profile routing, audio controls and an audition page are provided by Duvera.
 
 Creator artwork was generated with Higgsfield from the public channel photo. Four short audio candidates were extracted from the creator’s edited livestream highlights. These media are **not covered by the game code licenses**; source URLs, timestamps, generation IDs and unresolved speaker/audio review are documented in `creators/moosher/SOURCES.md`. The edition is labeled fan-made and does not claim endorsement.
+
+## Duvera Stack
+Original game engine, drawing code and UI written for Duvera Arcade, licensed GPL-3.0. No external game implementation or new media was imported. Reuses creator artwork and clips under the existing separate provenance and rights notices.
