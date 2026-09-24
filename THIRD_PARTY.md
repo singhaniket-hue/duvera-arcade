@@ -47,3 +47,6 @@ Original GPL-3.0 rules, tactical bot, UI and authoritative private-room code. No
 
 ## Duvera Dash
 Original GPL-3.0 runner mechanics, procedural scenery/body illustration and UI. The running character combines newly drawn canvas body/limbs with the existing creator expression images at their original aspect ratio. No new generated media or third-party game assets were used. Existing creator-media attribution and rights remain unchanged.
+
+## Duvera Smash
+Original GPL-3.0 physics, five level patterns, power-ups and canvas drawing code created for this arcade. No proprietary levels, branding, artwork or third-party game implementation were copied. Creator reactions reuse the existing separately attributed media.

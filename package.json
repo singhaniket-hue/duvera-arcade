@@ -14,7 +14,8 @@
     "check:creator": "node scripts/check-creator.mjs",
     "check:stack": "node scripts/check-stack.mjs && node scripts/stack-browser-check.mjs",
     "check:four": "node scripts/check-four.mjs && node scripts/check-rooms.mjs && node scripts/four-browser-check.mjs",
-    "check:dash": "node scripts/check-dash.mjs && node scripts/dash-browser-check.mjs"
+    "check:dash": "node scripts/check-dash.mjs && node scripts/dash-browser-check.mjs",
+    "check:smash": "node scripts/check-smash.mjs && node scripts/smash-browser-check.mjs"
   },
   "engines": {
     "node": ">=18"

@@ -51,6 +51,8 @@ jobs:
           npm run check:four
       - name: Dash mechanics and browser checks
         run: npm run check:dash
+      - name: Smash mechanics and browser checks
+        run: npm run check:smash
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4

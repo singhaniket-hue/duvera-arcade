@@ -17,9 +17,9 @@
     assets:new URL('creators/moosher/media/',root).href,
     channel:'https://www.youtube.com/@Moosherr',
     source:'https://www.youtube.com/watch?v=LnAsPIae94Q',
-    titles:{'clumsy-bird':'Moosh Flap','2048':'Moosh 2048','hextris':'Moosh Spin','stack':'Moosh Stack','four':'Moosh Four','dash':'Moosh Dash'},
+    titles:{'clumsy-bird':'Moosh Flap','2048':'Moosh 2048','hextris':'Moosh Spin','stack':'Moosh Stack','four':'Moosh Four','dash':'Moosh Dash','smash':'Moosh Smash'},
     palette:{ink:'#173e38',teal:'#155a51',mint:'#c2e5cd',coral:'#ef9279',cream:'#f4f0e7',gold:'#f2cd65'},
-    games:{dash:{tagline:'A little run. A lot of masti.',faces:{run:'emote-focus.png',jump:'emote-surprise.png',hit:'emote-sad.png'},sounds:{start:'start',milestone:'milestone',win:'win',lose:'lose'}},four:{tokens:['emote-focus.png','emote-surprise.png'],expressions:{idle:'emote-focus.png',win:'emote-win.png',lose:'emote-sad.png'},sounds:{start:'start',win:'win',lose:'lose'}},stack:{expressions:{idle:'emote-focus.png',streak:'emote-win.png',lose:'emote-sad.png'},sounds:{start:'start',milestone:'milestone',win:'win',lose:'lose'}}},
+    games:{smash:{expressions:{idle:'emote-focus.png',win:'emote-win.png',lose:'emote-sad.png'},sounds:{start:'start',milestone:'milestone',win:'win',lose:'lose'}},dash:{tagline:'A little run. A lot of masti.',faces:{run:'emote-focus.png',jump:'emote-surprise.png',hit:'emote-sad.png'},sounds:{start:'start',milestone:'milestone',win:'win',lose:'lose'}},four:{tokens:['emote-focus.png','emote-surprise.png'],expressions:{idle:'emote-focus.png',win:'emote-win.png',lose:'emote-sad.png'},sounds:{start:'start',win:'win',lose:'lose'}},stack:{expressions:{idle:'emote-focus.png',streak:'emote-win.png',lose:'emote-sad.png'},sounds:{start:'start',milestone:'milestone',win:'win',lose:'lose'}}},
     clips
   }) : null;
   // The future creator subdomain opens its edition without duplicating deployments.

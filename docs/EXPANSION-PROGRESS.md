@@ -33,3 +33,11 @@ Commit: 7b97048d594f05d6ef1c1f2acc789dff9484bd7e. Preview: https://four-7b97048.
 Plan: original fixed-step runner with an illustrated body and unchanged, uniformly scaled creator face assets; jump/hold-duck controls, fair isolated obstacle sequence, introductory grace, stars, capped increasing speed, isolated best and visibility pause. Test collisions, obstacle spacing across speed range, touch/keyboard, all three viewport shapes, storage failure, resize and resume; preview/release only once those and regressions pass.
 
 Dash pre-release: mechanics passed (276 generated encounters over ten minutes, legal responses at all speeds), 44 desktop/touch checks passed at 320px/short landscape/desktop. Visual review enlarged the portrait view without scaling the avatar out of proportion. Stack 47, Four full local 47, existing desktop 38, static and creator checks passed. A Linux CI race in Four's test was corrected by waiting for both clients' authoritative playing state; no rejection assertion was weakened (c91d13b).
+
+## Dash — LIVE
+Commit: c28d19743b1b3a68fb368083816fdf53ee5b9ba1. Preview: https://dash-c28d197.duvera-moosher.pages.dev/. Public: https://moosher.duvera.app/play.html?game=dash. Preview/public 44 browser checks passed; all 204 files hash-match. Full CI run 35953455800 passed, including existing 100/122 mobile and 38 desktop suites, Stack 47, Four 47 with local Worker, and Dash mechanics/browser checks.
+
+## Smash — implementation started
+Plan: original fixed-step brick physics, five original layouts, three lives, bounded wide/slow/extra-life bonuses, isolated level unlocks, portrait outside playfield. Verify all five levels and collision/life/power-up boundaries, mouse/keys/touch drag, short screens, pause, resize and storage failure. No new assets required.
+
+Smash pre-release validation: all five layouts clear through real collision logic; rebounds, shallow-angle guard, all bonuses, expiry, lives and stalled frames passed. 47 browser checks passed, including mouse/keyboard/touch drag, five-level UI victory, saved unlocks and storage failure. Stack 47, Dash 44 and existing desktop 38 still pass.
