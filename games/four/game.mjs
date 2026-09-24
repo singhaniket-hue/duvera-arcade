@@ -59,5 +59,5 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden&&mode==='so
 document.addEventListener('keydown',e=>{if(e.repeat||e.target.closest('input,select,button,a'))return;if(/^Digit[1-7]$/.test(e.code)){e.preventDefault();play(Number(e.code.at(-1))-1);}if(e.code==='ArrowLeft'||e.code==='ArrowRight'){e.preventDefault();selected=(selected+(e.code==='ArrowLeft'?6:1))%7;render();}if(e.code==='Space'){e.preventDefault();play(selected);}});
 // Read-only snapshots support diagnostics without exposing online seat tokens.
 window.fourSnapshot=()=>({mode,board:[...board],turn,ended,paused,state});
-if(!endpoint)document.querySelector('.room-help').textContent='Solo is ready. Private rooms await hosting authorization.';
+if(!endpoint)document.querySelector('.room-help').textContent='Private rooms are temporarily unavailable. Solo play is ready.';
 render();if(room&&/^[a-f0-9-]{36}$/.test(room))online();

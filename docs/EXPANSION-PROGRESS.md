@@ -1,6 +1,7 @@
 # Arcade expansion progress
 
 ## Current handoff — 2026-09-24
+- Cloudflare release in progress: PR #4 merged as `f22795a`. Worker `duvera-arcade-rooms` deployed on the existing Free plan at `https://duvera-arcade-rooms.singhaniket2019a.workers.dev`, version `e1cdfd7a-15f7-4e29-b543-d2929ecc273d` (tested Worker source `8705c42`). Frontend endpoint and public availability labels are prepared; Pages preview/production verification is the next step. Previous production deployment `0097dfa6-9968-4a55-8ccb-d286fbca75c8` is retained for rollback. No DNS changes or paid upgrades.
 - PR #3 defect follow-up: fixes and its credited test suite are on `fix/party-edge-cases`, based on verified `creator/moosher` commit `de423c0`. See [the fix report](PARTY-FIXES.md). All eleven reported issues reproduced and addressed locally; production is unchanged. Merge through review into `creator/moosher` before any later preview/release.
 - LIVE: Stack, Four solo (easy/normal bots), Dash, Smash, plus the three existing games.
 - Production source: `creator/moosher` at `24b90eaa7c56f452182398662cbffcc7b9a0259d`. Documentation/screenshot commits after this revision are not automatically deployed.

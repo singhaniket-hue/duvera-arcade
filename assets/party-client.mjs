@@ -3,7 +3,7 @@ export class PartyClient {
  constructor(kind,onState,onInk,notice){this.kind=kind;this.onState=onState;this.onInk=onInk;this.notice=notice;this.endpoint=window.ArcadeRooms?.endpoint;this.room=new URLSearchParams(location.search).get('room');this.token=null;this.state=null;this.socket=null;this.epoch=0;this.manual=false;this.attempts=0;}
  key(){return 'duvera.'+(window.ArcadeCreator?.id||'default')+'.'+this.kind+'.room.'+this.room;}
  async enter(create,name,avatar){
-  if(!this.endpoint)throw Error('Private rooms are local-only until the room service is deployed.');
+  if(!this.endpoint)throw Error('Private rooms are temporarily unavailable. Please try again later.');
   if(create){this.state=null;this.token=null;}else if(!/^[a-f0-9-]{36}$/.test(this.room||''))throw Error('Invalid invite link.');
   if(!create&&this.room)try{this.token=localStorage.getItem(this.key());}catch{}
   if(create||!this.token){const res=await fetch(this.endpoint+'/party/'+this.kind+'/rooms'+(create?'':'/'+this.room+'/join'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,avatar})});const data=await res.json();if(!res.ok)throw Error(data.error||'Room unavailable.');this.room=data.room||this.room;this.token=data.token;try{localStorage.setItem(this.key(),this.token);}catch{this.notice('Storage unavailable: keep this tab open to retain your seat.');}}

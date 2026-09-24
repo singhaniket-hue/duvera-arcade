@@ -31,6 +31,6 @@ client.onDisconnect=()=>{if(mode==='online')render();};
 document.addEventListener('keydown',e=>{if(e.repeat||e.target.closest('input,select,textarea,a'))return;if(/^Digit[1-4]$/.test(e.code)){e.preventDefault();answerQuestion(Number(e.code.at(-1))-1);}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){window.CreatorAudio?.stop();if(mode==='practice'){practice.paused=true;render();}}else if(mode==='online')client.sync();lastTime=performance.now();});
 setInterval(()=>{const now=performance.now();if(mode==='practice'){const phase=practice.phase;practice.update(now-lastTime);if(phase!==practice.phase)render();}lastTime=now;tickText();},100);
-$('#availability').textContent=client.endpoint?'Private multiplayer is connected to the local room service.':'Private multiplayer requires the local room service. Solo practice works here.';
+$('#availability').textContent=client.endpoint?'Practice solo or invite 2–8 friends to a private match.':'Private rooms are temporarily unavailable. Solo practice is ready.';
 window.quizSnapshot=()=>({mode,...(current()||{})});
 if(client.room){let saved=false;try{saved=!!localStorage.getItem(client.key());}catch{}if(saved)enter(false);}

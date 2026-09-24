@@ -40,7 +40,7 @@ $('#streamer').checked=ui.read('streamer')===1;$('#streamer').onchange=()=>{ui.w
 document.addEventListener('visibilitychange',()=>{end();revealed=false;secret();if(document.hidden)window.CreatorAudio?.stop();else client.sync();});window.addEventListener('blur',()=>{revealed=false;secret();});
 client.onDisconnect=()=>{stroke=null;batch=[];$('#guess').disabled=$('#send').disabled=true;};
 setInterval(()=>{$('#timer').textContent=state?.deadline?Math.max(0,Math.ceil((state.deadline-Date.now()-timerOffset)/1000))+'s':'';},250);
-$('#availability').textContent=client.endpoint?'Invite only. No accounts.':'Local implementation: rooms require the local Worker. Public hosting is not enabled.';
+$('#availability').textContent=client.endpoint?'Invite 3–8 friends. Private rooms, no accounts.':'Private rooms are temporarily unavailable. Please try again later.';
 window.drawSnapshot=()=>state?structuredClone(state):null;repaint();
 // A saved token reconnects without asking for another seat; fresh invites ask for a nickname first.
 if(client.room){let saved=false;try{saved=!!localStorage.getItem(client.key());}catch{}if(saved)enter(false);}
