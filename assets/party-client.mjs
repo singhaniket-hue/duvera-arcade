@@ -17,7 +17,7 @@ export class PartyClient {
   ws.onclose=e=>{if(epoch!==this.epoch)return;this.notice(e.reason||'Disconnected. Reconnecting…');this.onDisconnect?.();if(!this.manual&&![1000,1008,1009].includes(e.code)&&this.attempts<5){this.retry=setTimeout(()=>this.connect(),Math.min(5000,500*2**this.attempts++));}};
   ws.onerror=()=>this.notice('Cannot reach rooms. Check the connection and reconnect.');
  }
- send(type,extra={}){if(this.socket?.readyState!==1){this.notice('Disconnected. Reconnect before sending.');return false;}this.socket.send(JSON.stringify({type,id:crypto.randomUUID(),roundId:this.state?.roundId,canvasVersion:this.state?.canvasVersion,...extra}));return true;}
+ send(type,extra={}){if(this.socket?.readyState!==1){this.notice('Disconnected. Reconnect before sending.');return false;}const data=JSON.stringify({type,id:crypto.randomUUID(),roundId:this.state?.roundId,canvasVersion:this.state?.canvasVersion,...extra}),limit=type==='pack'?65536:16384;if(new TextEncoder().encode(data).byteLength>limit){this.notice(type==='pack'?'Custom pack is too large (64 KiB maximum). Shorten words or aliases and try again.':'Input is too large. Shorten it and try again.');return false;}this.socket.send(data);return true;}
  sync(){if(this.socket?.readyState===1)this.socket.send('{"type":"sync"}');}
  leave(){this.send('leave');this.manual=true;clearTimeout(this.retry);try{localStorage.removeItem(this.key());}catch{}this.token=null;}
 }

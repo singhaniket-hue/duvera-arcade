@@ -2,7 +2,7 @@ import {setupGame} from '../../assets/mini-game.js';
 import {PartyClient} from '../../assets/party-client.mjs';
 import {Practice} from './practice.mjs';
 const ui=setupGame('quiz','Quiz Party'),$=s=>document.querySelector(s),notice=s=>$('#notice').textContent=s;
-let mode='menu',practice=null,state=null,offset=0,lastTime=performance.now(),announced='',loading=false;
+let mode='menu',practice=null,state=null,offset=0,lastTime=performance.now(),announced='',loading=false,visibleQuestion='';
 const client=new PartyClient('quiz',s=>{if(mode!=='online')return;state=s;offset=s.serverNow-Date.now();render();},()=>{},notice);
 if(self!==top)$('main').classList.add('embedded');for(let i=0;i<6;i++){const o=document.createElement('option');o.value=i;o.textContent=['Focus','Surprise','Smile','Win','Sad','Laugh'][i];$('#avatar').append(o);}
 const current=()=>mode==='practice'?practice.snapshot():state;
@@ -14,7 +14,10 @@ function render(){const s=current();if(!s)return;$('#room').hidden=false;$('#lob
  $('#explanation').hidden=!closed;$('#explain').textContent=s.question?.explanation||'';if(closed)$('#source').href=s.question.source;else $('#source').removeAttribute('href');
  $('#next').hidden=!(solo?s.phase==='reveal':s.phase==='quizReveal'&&s.host===s.you);$('#retry').hidden=!solo||!final;$('#players').replaceChildren();
  const players=solo?[{name:'You',score:s.score,avatar:0,connected:true}]:[...s.players].sort((a,b)=>b.score-a.score);for(const p of players){const li=document.createElement('li');const file=ui.theme.avatars?.[p.avatar];if(file){const img=document.createElement('img');img.src=ui.profile.assets+file;img.alt='';li.append(img);}const label=document.createElement('span');label.textContent=p.name+(!p.connected?' · disconnected':'')+(p.id===s.host?' (host)':'');const score=document.createElement('strong');score.textContent=p.score;li.append(label,score);$('#players').append(li);}
- $('#best').textContent=solo?'Practice best: '+ui.read('best'):'';$('#connection').textContent=solo?'':'Disconnected seats are reserved for 60 seconds. The timer continues; leave or reconnect below. A departing host passes control to a connected player.';
+ $('#best').textContent=solo?'Practice best: '+ui.read('best'):'';$('#connection').textContent=solo?'':s.reason||'Disconnected seats are reserved for 60 seconds. The timer continues; leave or reconnect below. A departing host passes control to a connected player.';
+ const questionKey=s.phase==='question'?mode+':'+(s.roundId||s.round):'';
+ if(questionKey&&questionKey!==visibleQuestion)$('#question').scrollIntoView({block:'start',behavior:'instant'});
+ visibleQuestion=questionKey;
  const event=s.round+':'+s.phase;if(closed&&announced!==event){announced=event;ui.expression(s.selection===s.question?.correct?'win':'lose');ui.react(final?'win':s.selection===s.question?.correct?'milestone':'lose');if(solo&&final&&s.score>ui.read('best')){$('#storage-note').hidden=ui.write('best',s.score);$('#best').textContent='Practice best: '+Math.max(s.score,ui.read('best'));}}tickText();
 }
 function tickText(){const s=current();$('#timer').textContent=mode==='practice'&&s?.phase==='question'?Math.ceil(s.remaining/1000)+'s':mode==='online'&&s?.deadline?Math.max(0,Math.ceil((s.deadline-Date.now()-offset)/1000))+'s':'';}

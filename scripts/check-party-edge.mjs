@@ -47,6 +47,39 @@ check('quiz: when the only other player leaves, the host can still finish or res
   assert.ok(moved || r.phase === 'finished', 'host is stuck on question ' + r.round + ' (next: "Wait for 2 connected players", start: "Match already started", joins rejected)');
 });
 
+check('draw: an unlocked paused room admits a replacement who can resume and draw', () => {
+  const {r, players} = room('draw', 3);
+  act(r, players[0].id, 'start');
+  act(r, players[2].id, 'leave');
+  act(r, r.host, 'skip'); act(r, r.host, 'skip');
+  assert.equal(r.phase, 'paused');
+  act(r, r.host, 'lock');
+  const replacement = addPlayer(r, 'new-token', 'Replacement', 0, now);
+  replacement.offline = null;
+  assert.equal(r.total, 3, 'the departed unplayed seat does not inflate the turn count');
+  act(r, r.host, 'start');
+  assert.equal(r.phase, 'choose');
+  assert.ok(r.locked, 'resuming locks active joins again');
+  act(r, r.host, 'skip'); act(r, r.host, 'skip');
+  assert.equal(r.drawer, replacement.id);
+});
+
+check('quiz: early finish unlocks invites, preserves earned scores and supports a fresh match', () => {
+  const {r, players} = room('quiz', 2);
+  act(r, r.host, 'start');
+  act(r, r.host, 'answer', {choice: r.quiz[0].correct});
+  act(r, players[1].id, 'leave');
+  assert.equal(r.phase, 'finished');
+  assert.equal(players[0].score, 1000);
+  const replacement = addPlayer(r, 'new', 'Replacement', 0, now);
+  replacement.offline = null;
+  act(r, r.host, 'start');
+  assert.equal(r.phase, 'question');
+  assert.equal(r.round, 1);
+  assert.equal(players[0].score, 0);
+  assert.equal(r.reason, '');
+});
+
 check('quiz: question closes as soon as the last unanswered player leaves', () => {
   const {r, players} = room('quiz', 3);
   act(r, players[0].id, 'start');
@@ -116,6 +149,30 @@ check('draw: no word is offered twice in one match', () => {
     const repeats = offered.filter((w, i) => offered.indexOf(w) !== i);
     assert.equal(repeats.length, 0, `match ${match + 1} offered ${[...new Set(repeats)].join(', ')} more than once; an earlier reveal ("Word: …") stays in the feed`);
   }
+});
+
+check('draw: a short custom pack shrinks choices and never repeats a chosen answer', () => {
+  const {r} = room('draw', 3);
+  act(r, r.host, 'pack', {pack: 'custom', words: ['cat', 'sun', 'bike'].map(word => ({word, aliases: []}))});
+  act(r, r.host, 'start');
+  const used = [];
+  for (let turn = 0; turn < 3; turn++) {
+    assert.equal(r.choices.length, 3 - turn);
+    assert.throws(() => act(r, r.drawer, 'choose', {choice: r.choices.length}));
+    used.push(drawing(r).word);
+    act(r, r.host, 'skip'); act(r, r.host, 'skip');
+  }
+  assert.equal(r.phase, 'finished');
+  assert.equal(new Set(used).size, 3);
+});
+
+check('draw: a one-grapheme word stays masked after the timed hint', () => {
+  const {r, players} = room('draw', 3);
+  r.custom = ['क', 'घर', 'पेड़'].map(word => ({word, aliases: []}));
+  act(r, r.host, 'start');
+  act(r, r.drawer, 'choose', {choice: r.choices.findIndex(w => w.word === 'क')});
+  now += 40000; advance(r, now);
+  assert.equal(partySnapshot(r, players[1].id, now).hint, '_');
 });
 
 // --- Scoring --------------------------------------------------------------------------------------
@@ -205,10 +262,32 @@ try {
   });
 
   await checkAsync('rejected commands do not write to storage', async () => {
-    const {seats, send, puts} = await seated('draw', 3);
+    const {seats, send, puts, party} = await seated('draw', 3);
     const before = puts();
+    const stateBefore = structuredClone(party.room);
     for (let i = 0; i < 10; i++) await send(seats[1], 'start');
     assert.equal(puts() - before, 0, `10 rejected "start" commands from a guest caused ${puts() - before} storage writes and full-state broadcasts`);
+    assert.deepEqual(party.room, stateBefore, 'rejections must not dirty command IDs or any game state');
+  });
+
+  await checkAsync('custom packs: maximum Unicode text fits while non-pack UTF-8 input stays bounded', async () => {
+    const {seats, send, party} = await seated('draw', 3);
+    const words = Array.from({length: 60}, (_, i) => ({word: String(i).padStart(2, '0') + '猫'.repeat(38), aliases: Array(6).fill('猫'.repeat(40))}));
+    await send(seats[0], 'pack', {pack: 'custom', words});
+    assert.equal(party.room.custom.length, 60);
+    assert.ok(!seats[0].ws.closed);
+    await party.webSocketMessage(seats[1].ws, JSON.stringify({type: 'guess', text: '猫'.repeat(6000)}));
+    assert.equal(seats[1].ws.closed?.code, 1009, '16 KiB is a byte bound, not a character bound');
+  });
+
+  await checkAsync('a rejected late answer still persists the server deadline transition', async () => {
+    const {party, seats, send, puts} = await seated('quiz', 2);
+    await send(seats[0], 'start');
+    const before = puts(); now = party.room.deadline;
+    await send(seats[0], 'answer', {choice: 0});
+    assert.equal(party.room.phase, 'quizReveal');
+    assert.equal(puts(), before + 1);
+    assert.equal(party.room.players[0].score, 0);
   });
 
   await checkAsync('draw: a wrong guess on a full canvas does not resend the whole drawing to everyone', async () => {
@@ -220,10 +299,19 @@ try {
     for (let seq = 0; seq < 250; seq++) { await send(drawer, 'stroke', {stroke: 'long', seq, color: '#173e38', size: 7, points: Array.from({length: 32}, () => [Math.random(), Math.random()])}); }
     assert.equal(party.room.points, 8000);
     const guesser = seats.find(s => s !== drawer);
-    for (const s of seats) s.ws.bytes = 0;
+    for (const s of seats) { s.ws.bytes = 0; s.ws.messages = []; }
     await send(guesser, 'guess', {text: 'not the word'});
     const total = seats.reduce((n, s) => n + s.ws.bytes, 0);
     assert.ok(total < 8 * 65536, `one wrong guess sent ${(total / 1e6).toFixed(1)} MB (${Math.round(total / 8 / 1024)} KB per player); at 20 messages/s per guesser that is ~${Math.round(total * 20 * 7 / 1e6)} MB/s of JSON the room must serialize`);
+    assert.ok(seats.every(s => s.ws.messages.every(m => !('drawing' in m))), 'ordinary state updates contain no canvas history');
+    console.log(`     Full-canvas wrong guess: ${total} bytes total across 8 players.`);
+    const storedDrawing = structuredClone(party.room.drawing), writes = party.room.revision;
+    await send(guesser, 'sync');
+    assert.deepEqual(guesser.ws.messages.at(-1).drawing, storedDrawing, 'explicit resync restores the entire canvas');
+    assert.equal(party.room.revision, writes, 'resync does not mutate the game');
+    const beforeRejected = structuredClone(party.room);
+    await send(drawer, 'stroke', {stroke: 'overfull-new-stroke', seq: 0, color: '#173e38', size: 7, points: [[0, 0]]});
+    assert.deepEqual(party.room, beforeRejected, 'rejecting an overfull stroke must not insert an empty gesture');
   });
 
   await checkAsync('a kicked player cannot re-authenticate with the old token', async () => {

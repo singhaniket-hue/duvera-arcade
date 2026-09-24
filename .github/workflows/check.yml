@@ -44,6 +44,11 @@ jobs:
           npm run check:multiplayer
       - name: Dash mechanics and browser checks
         run: npm run check:dash
+      - name: Party edge cases, fuzz, eight-player protocol and phone checks
+        run: npm run check:party-rigor
+        env:
+          FUZZ_GAMES: 6000
+          SCREENSHOT_DIR: output/playwright/party-rigor
       - name: Smash mechanics and browser checks
         run: npm run check:smash
       - name: Upload screenshots
