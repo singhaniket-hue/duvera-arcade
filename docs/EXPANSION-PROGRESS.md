@@ -1,6 +1,7 @@
 # Arcade expansion progress
 
 ## Current handoff — 2026-09-24
+- Audio submissions: implemented on `feature/audio-submissions`, local security/format 38 and browser 43 checks passed. Separate Free-plan Worker and private owner inbox; approval only retains a candidate for a later release. Full CI, hosted preview, owner-key provisioning and release are the next steps. [Design, limits and operations](../submissions/README.md).
 - LIVE: all nine games, including Four private two-player rooms, Draw private 3–8-player rooms and Quiz practice/private 2–8-player matches. [Release URLs, tests, screenshots and rollback](CLOUDFLARE-RELEASE.md).
 - Production source: `creator/moosher` at `757fe7150f931b615ffc0a13a52468caef451974`. Pages production deployment `0402dd4b-808d-4811-bc3e-f03917856792`; preview https://fc45d002.duvera-moosher.pages.dev. All 217 public files match the tested build. Documentation/test-harness commits after this revision are not automatically deployed.
 - Worker `duvera-arcade-rooms` is live at `https://duvera-arcade-rooms.singhaniket2019a.workers.dev`, version `e1cdfd7a-15f7-4e29-b543-d2929ecc273d` (tested Worker source `8705c42`, unchanged in the deployed frontend revision). Scoped OAuth renewal succeeded. Existing Workers Free plan retained; no DNS changes or paid upgrades.
