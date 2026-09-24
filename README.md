@@ -1,6 +1,6 @@
 # Duvera Arcade
 
-A browser arcade with **Clumsy Bird**, **2048**, **Hextris**, and original **Stack**, **Four**, **Dash** and **Smash** games. All released solo games are static and need no account or backend. Private Four rooms are implemented separately and await hosting authorization.
+A browser arcade with **Clumsy Bird**, **2048**, **Hextris**, and original **Stack**, **Four**, **Draw**, **Dash**, **Smash** and **Quiz Party** games, live at https://moosher.duvera.app. Solo games are static. Four, Draw and Quiz private rooms use a separate Cloudflare Worker; no account is needed.
 
 ## Play locally
 
@@ -60,7 +60,7 @@ These settings describe a generic deployment. Preserve any existing `leo.duvera.
 - `credits.html`, `THIRD_PARTY.md`: creators, licenses and integration changes.
 - `scripts/`: dependency-free local server, checks and static build.
 
-The first optional creator edition is Moosher; multiplayer remains deferred. The included games are independent packages, so additional games can be added without changing their gameplay code.
+The first optional creator edition is Moosher. The included games are independent packages, so additional games can be added without changing their gameplay code.
 
 ## Licensing
 
@@ -94,15 +94,15 @@ Run `npm run check:stack` for deterministic mechanics and desktop/touch browser 
 
 Release status and rollback: [expansion progress](docs/EXPANSION-PROGRESS.md).
 
-Four (`/play.html?game=four&creator=moosher`) includes easy/normal bots, keyboard/touch play, pause and retry. Private-room implementation is in `multiplayer/`; online is disabled in production until Worker deployment authorization is renewed and hosted tests pass. See [room deployment and cost notes](multiplayer/README.md). `npm run check:four` expects the local Worker on port 8787 (start with `npm run dev --prefix multiplayer`). CI runs the full room suite; `SOLO_ONLY=1` explicitly checks only the released solo scope on a hosted deployment and reports that omission.
+Four (`/play.html?game=four&creator=moosher`) includes easy/normal bots, keyboard/touch play, pause and retry, plus live private two-player rooms. The room service is in `multiplayer/`; see [deployment and cost notes](multiplayer/README.md). `npm run check:four` expects the local Worker on port 8787 (start with `npm run dev --prefix multiplayer`). CI runs the full room suite; `SOLO_ONLY=1` checks only solo gameplay and reports the omitted online tests.
 
 Dash (`/play.html?game=dash&creator=moosher`) is an original static runner. Space/Up/W jumps; hold Down/S or the large Duck button to duck. Crates and overhead signs are separated by at least 1.85 seconds at spawn, speed is capped, and the opening has a grace period. Stars add 25 points. Hiding the page pauses it; bests persist on pause/loss and are isolated per creator. `npm run check:dash` checks mechanics, a ten-minute generated course, keyboard/touch, collisions, persistence, resize and storage-denied behavior.
 
 Smash (`/play.html?game=smash&creator=moosher`) has five original brick layouts. Move with mouse, arrows, or a touch drag; Space/tap launches a serve. Three lives per fresh level attempt; catch W for twelve seconds of a wider paddle, S for ten seconds of a slower ball, or + for an extra life (capped at five). Level unlocks are stored separately for each creator and offered on reload. Physics uses small fixed substeps and limits shallow ball angles. Run `npm run check:smash` for all-level collision tests and desktop/mobile gameplay, progression and failure-case checks.
 
-## Draw and Quiz: local preview only
+## Draw and Quiz Party
 
-Draw (`/play.html?game=draw&creator=moosher`) supports private rooms for 3–8 players, English/Romanized Hindi/custom words, rotation, server-checked guesses, drawing tools and streamer mode. Quiz (`/play.html?game=quiz&creator=moosher`) has static solo practice and 2–8-player private ten-question matches. Multiplayer correct answers are sent only after a question closes; practice uses a separate pack. The deployed seven-game site has not been changed by this local implementation.
+Draw (`/play.html?game=draw&creator=moosher`) supports private rooms for 3–8 players, English/Romanized Hindi/custom words, rotation, server-checked guesses, drawing tools and streamer mode. Quiz (`/play.html?game=quiz&creator=moosher`) has static solo practice and 2–8-player private ten-question matches. Multiplayer correct answers are sent only after a question closes; practice uses a separate pack. Both are live on the creator domain; see [release verification and rollback](docs/CLOUDFLARE-RELEASE.md).
 
 For a local session, use two PowerShell terminals at the repository root:
 
@@ -116,7 +116,7 @@ $env:ROOM_ENDPOINT='http://127.0.0.1:8787'
 npm start -- --host 127.0.0.1
 ```
 
-Open `http://127.0.0.1:4173/creators/moosher/`. Share the generated invite between independent browser profiles/private windows on this computer; ordinary tabs share a seat through localStorage. Rooms need 3 participants for Draw and 2 for Quiz. The service only permits configured origins; these loopback invites are not Internet invitations. The public `assets/room-config.js` remains unset.
+Open `http://127.0.0.1:4173/creators/moosher/`. Share the generated invite between independent browser profiles/private windows on this computer; ordinary tabs share a seat through localStorage. Rooms need 3 participants for Draw and 2 for Quiz. The service only permits configured origins; these loopback invites are not Internet invitations. The local endpoint override above prevents development sessions from using the public Worker configured in `assets/room-config.js`.
 
 `npm run check:multiplayer` starts an isolated local Worker, runs Four/Draw/Quiz rules and browser suites, and stops its own process tree. Test-only SQLite state and logs are retained under ignored `output/room-test-*`. It does not deploy anything or relax production limits. Existing `check:four`, `check:draw` and `check:quiz` accept an already-running Worker through `ROOM_ENDPOINT`. Install the repository's Playwright version and Chromium first as described above.
 

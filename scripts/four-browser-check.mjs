@@ -50,7 +50,7 @@ try{
  await p.screenshot({path:shots+'/online-win.png'});await p.locator('#rematch').click();await q.waitForFunction(()=>fourSnapshot().state.seats[0].rematch);await q.locator('#rematch').click();await p.waitForFunction(()=>fourSnapshot().state.match===2);check('rematch resets and alternates first player',(await state(p)).board.every(x=>!x)&&(await state(p)).turn===2);
  await p.locator('#leave').click();await q.waitForFunction(()=>fourSnapshot().state.status==='closed');check('host leave closes room with explanation',true);
  await a.close();await b.close();await third.close();
- }else console.log('ONLINE NOT TESTED: this deployment exposes solo only; complete room tests run against local Worker separately.');
+ }else console.log('ONLINE NOT TESTED in this run: SOLO_ONLY=1; run the full suite against the intended Worker to verify rooms.');
  const blocked=await context();await blocked.addInitScript(()=>Object.defineProperty(window,'localStorage',{get(){throw Error('blocked');}}));const bp=await blocked.newPage();monitor(bp);await bp.goto(base+'games/four/?creator=moosher');await bp.locator('#solo').click();await bp.locator('#columns button').nth(3).click();await settled(bp,2);check('solo works without storage',true);await bp.evaluate(()=>{Object.defineProperty(document,'hidden',{get:()=>true});document.dispatchEvent(new Event('visibilitychange'));});check('hidden solo pauses',await bp.evaluate(()=>fourSnapshot().paused));await blocked.close();
  check('no JavaScript or static asset errors',errors.length===0);console.log(`${checks} Four browser checks passed.`);
 }finally{await browser.close();server?.kill();}

@@ -1,6 +1,6 @@
 # Private room service
 
-Status: Four, Draw and Quiz implementations tested locally against Wrangler's Durable Object runtime; **none of the multiplayer services is deployed**. The latest follow-up requests local implementation/testing only. Existing CLI OAuth token expired; the scoped renewal consent timed out while awaiting the owner. Static production sets `ArcadeRooms.endpoint` to null and labels rooms unavailable. Do not describe local multiplayer results as public multiplayer verification.
+Status: **Four, Draw and Quiz private rooms are deployed and verified**. The static site is https://moosher.duvera.app; the separate Worker is https://duvera-arcade-rooms.singhaniket2019a.workers.dev. Scoped OAuth renewal succeeded, the existing Workers Free plan was retained, and no DNS changes were needed. See [release evidence, exact revisions and rollback](../docs/CLOUDFLARE-RELEASE.md).
 
 ## Architecture and limits
 
@@ -27,9 +27,9 @@ Planning assumption (not measured production traffic): 50 concurrent rooms for o
 
 `check-four.mjs` exercises all rule outcomes and complete bot games. `check-rooms.mjs` uses real room methods with fake transport/clock to cover expiry, grace timeout, storage restoration and abuse cases. `four-browser-check.mjs` exercises real independent browsers and a running Worker, with no game-state shortcut for match outcomes. Physical mobile/Safari and production latency/quota behavior remain additional review.
 
-## Draw and Quiz party service (local only)
+## Draw and Quiz party service
 
-A second SQLite class, `PartyRoom` (migration v2), shares bounded sessions, hibernating sockets, authenticated reconnect, room expiry and host transfer across Draw and Quiz. Game-prefixed object names keep their namespaces separate. Existing FourRoom migration v1 and protocol remain intact. Public Pages configuration still has no Worker endpoint.
+A second SQLite class, `PartyRoom` (migration v2), shares bounded sessions, hibernating sockets, authenticated reconnect, room expiry and host transfer across Draw and Quiz. Game-prefixed object names keep their namespaces separate. Existing FourRoom migration v1 and protocol remain intact. Public Pages configuration contains only the public Worker endpoint, never credentials.
 
 Limits: 8 players, 16 sockets including pending authentication, 16 KiB incoming gameplay messages (UTF-8 bytes), 20 messages/second/socket, 256 recent successful command IDs, 24-hour room lifetime, 30-minute empty-room cleanup, 60-second disconnected-seat grace and 10-second authentication timeout. Only an authenticated Draw host's pack command may use up to 64 KiB, enough for 60 words and six aliases each including Unicode. The browser explains an oversized pack before sending it. The existing hashed-IP creation gate remains 10 rooms/hour across all games. Leaving/kicking removes the token; active-room joins are rejected. Disconnect transfers hosting immediately; Draw skips a disconnected drawer's turn. Quiz timers continue and answers remain locked on reconnect.
 
@@ -41,7 +41,7 @@ Ordinary state updates omit canvas history. Ink uses ordered deltas; reconnect a
 
 Quiz uses server-generated question IDs per round and server clocks. Correct indexes, explanations and scores are withheld until all eligible answers arrive or the 20-second deadline closes. The host advances through explanations. Ten rounds produce final standings. The public practice pack is separate and never fetched by the multiplayer client. Source files are public for review; this is casual private-room play, not an anti-cheat competition.
 
-### Usage implications before any future release
+### Usage implications for public rooms
 
 Draw persists each accepted batch for recovery. A conservative continuous-drawing estimate is 12.5 batches/second × 600 seconds for an eight-turn match = 7,500 state writes, plus alarm writes. Budget roughly 15,000 row writes per busy room/match before guesses and cleanup. Five simultaneous ten-minute rooms could approach 75,000 writes; fifty would exceed the Free daily allowance. This is an estimate, not measured hosted usage. Drawing payload size also amplifies storage I/O and outgoing traffic. Quiz is much lighter: around 80 answers plus transitions per eight-player match, roughly hundreds of writes. Measure on a hosted preview and consider coarser persistence before opening Draw to a large stream; do not upgrade automatically.
 

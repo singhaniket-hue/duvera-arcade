@@ -1,4 +1,4 @@
-// Draw and Quiz on phone-sized screens with real touch input, against a running local Worker.
+// Draw and Quiz on phone-sized screens with real touch input, against a local or hosted Worker.
 // Hosts play inside the arcade player; guests open the invite link. Needs ROOM_ENDPOINT.
 import {spawn} from 'node:child_process';
 import {mkdir} from 'node:fs/promises';
@@ -9,9 +9,9 @@ const endpoint = process.env.ROOM_ENDPOINT || 'http://127.0.0.1:8787';
 const shots = process.env.SCREENSHOT_DIR;
 if (shots) await mkdir(shots, {recursive: true});
 const port = await new Promise(resolve => { const s = net.createServer(); s.listen(0, '127.0.0.1', () => { const p = s.address().port; s.close(() => resolve(p)); }); });
-const server = spawn(process.execPath, ['scripts/serve.mjs', '--port', String(port), '--host', '127.0.0.1'], {stdio: ['ignore', 'pipe', 'inherit'], env: {...process.env, ROOM_ENDPOINT: endpoint}});
-await new Promise(resolve => server.stdout.once('data', resolve));
-const base = `http://127.0.0.1:${port}/`;
+const server = process.env.TEST_BASE_URL ? null : spawn(process.execPath, ['scripts/serve.mjs', '--port', String(port), '--host', '127.0.0.1'], {stdio: ['ignore', 'pipe', 'inherit'], env: {...process.env, ROOM_ENDPOINT: endpoint}});
+if (server) await new Promise(resolve => server.stdout.once('data', resolve));
+const base = process.env.TEST_BASE_URL || `http://127.0.0.1:${port}/`;
 const results = [];
 const check = (name, ok, detail = '') => { results.push(!!ok); console.log(`${ok ? 'PASS' : 'FAIL'} ${name}${!ok && detail ? '\n     ' + detail : ''}`); };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -174,7 +174,7 @@ try {
     try { await fn(); } catch (e) { check(`${name}: phone scenario completed`, false, e.message.split('\n')[0]); }
   }
   check('no page errors on phones', !errors.length, errors.slice(0, 3).join(' | '));
-} finally { await browser.close(); server.kill(); }
+} finally { await browser.close(); server?.kill(); }
 const failed = results.filter(x => !x).length;
 console.log(`\n${results.length - failed} passed, ${failed} failed.`);
 process.exit(failed ? 1 : 0);

@@ -1,8 +1,10 @@
 # Draw and Quiz defect follow-up — 2026-09-24
 
+This report records the local fix phase. The fixes subsequently merged through PR #4 and were deployed with hosted verification; see the [Cloudflare release record](CLOUDFLARE-RELEASE.md) for current status.
+
 Scope: local fixes and regression tests for the eleven issues reported in [PR #3](https://github.com/singhaniket-hue/duvera-arcade/pull/3). No Pages upload, Worker deployment, DNS change, plan upgrade, or media replacement. Production remains `24b90eaa7c56f452182398662cbffcc7b9a0259d`.
 
-Branch: `fix/party-edge-cases`, based on verified remote `creator/moosher` at `de423c0ffd7d597c33d50fc25beb1932ff758ebc`. PR #3 test commit `405d6c9` was cherry-picked as `13010cc`, retaining its author. PR #3 itself and its branch were not modified. The latest commit touching this report contains the fixes and evidence (`git log -1 -- docs/PARTY-FIXES.md`).
+Branch: `fix/party-edge-cases`, based on verified remote `creator/moosher` at `de423c0ffd7d597c33d50fc25beb1932ff758ebc`. PR #3 test commit `405d6c9` was cherry-picked as `13010cc`, retaining its author. PR #3 itself and its branch were not modified. Commit `8705c42` contains the fixes and evidence.
 
 ## Changes
 
