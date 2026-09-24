@@ -1,6 +1,6 @@
 # Duvera Arcade
 
-A static browser arcade with **Clumsy Bird**, **2048** and **Hextris**. No account, database, multiplayer server or API key is required.
+A browser arcade with **Clumsy Bird**, **2048**, **Hextris**, and original **Stack**, **Four** and **Dash** games. All released solo games are static and need no account or backend. Private Four rooms are implemented separately and await hosting authorization.
 
 ## Play locally
 
@@ -95,3 +95,5 @@ Run `npm run check:stack` for deterministic mechanics and desktop/touch browser 
 Release status and rollback: [expansion progress](docs/EXPANSION-PROGRESS.md).
 
 Four (`/play.html?game=four&creator=moosher`) includes easy/normal bots, keyboard/touch play, pause and retry. Private-room implementation is in `multiplayer/`; online is disabled in production until Worker deployment authorization is renewed and hosted tests pass. See [room deployment and cost notes](multiplayer/README.md). `npm run check:four` expects the local Worker on port 8787 (start with `npm run dev --prefix multiplayer`). CI runs the full room suite; `SOLO_ONLY=1` explicitly checks only the released solo scope on a hosted deployment and reports that omission.
+
+Dash (`/play.html?game=dash&creator=moosher`) is an original static runner. Space/Up/W jumps; hold Down/S or the large Duck button to duck. Crates and overhead signs are separated by at least 1.85 seconds at spawn, speed is capped, and the opening has a grace period. Stars add 25 points. Hiding the page pauses it; bests persist on pause/loss and are isolated per creator. `npm run check:dash` checks mechanics, a ten-minute generated course, keyboard/touch, collisions, persistence, resize and storage-denied behavior.

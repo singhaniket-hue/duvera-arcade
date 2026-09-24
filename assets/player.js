@@ -1,6 +1,7 @@
 /* Duvera Arcade player shell. GPL-3.0. */
 'use strict';
 const games = {
+  'dash': {name:'Dash',path:'games/dash/',controls:'Space / ↑ to jump · Hold ↓ to duck · P to pause'},
   'four': {name:'Four',path:'games/four/',controls:'Connect four · Tap a column or keys 1–7'},
   'stack': {name:'Stack',path:'games/stack/',controls:'Space, click or tap to drop · P to pause · M for voice'},
   'clumsy-bird': {name: 'Clumsy Bird', path: 'games/clumsy-bird/', controls: 'Space, click or tap to fly · M to mute'},

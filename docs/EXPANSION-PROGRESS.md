@@ -25,3 +25,11 @@ Plan: original shared pure rules and depth-limited tactical bot; accessible 7x6 
 Four: 47 browser checks passed locally (desktop/touch, complete solo game, real two-context rooms, rejection/reconnect/rematch/leave), plus rules and lifecycle/security suites. Worker dry-run builds successfully. Stack's 47 browser checks still pass.
 
 **Blocker:** Wrangler's existing OAuth token is expired and unrefreshable; an owner consent request timed out. The dashboard confirms Workers Free ($0). No backend was deployed and no paid upgrade was introduced. Four will release solo with explicit online-unavailable text; full multiplayer code remains reviewable under `multiplayer/`. Draw is unstarted and deferred behind the same access blocker; next static game is Dash.
+
+## Four solo — LIVE; multiplayer NOT deployed
+Commit: 7b97048d594f05d6ef1c1f2acc789dff9484bd7e. Preview: https://four-7b97048.duvera-moosher.pages.dev/. Public: https://moosher.duvera.app/play.html?game=four. Preview/public each passed all 32 solo browser checks; all 200 static files match. Local full suite: 47 browser checks, plus rules/lifecycle/security tests. Existing regressions: 100 + 122 mobile, 38 desktop, 47 Stack.
+
+## Dash — implementation started
+Plan: original fixed-step runner with an illustrated body and unchanged, uniformly scaled creator face assets; jump/hold-duck controls, fair isolated obstacle sequence, introductory grace, stars, capped increasing speed, isolated best and visibility pause. Test collisions, obstacle spacing across speed range, touch/keyboard, all three viewport shapes, storage failure, resize and resume; preview/release only once those and regressions pass.
+
+Dash pre-release: mechanics passed (276 generated encounters over ten minutes, legal responses at all speeds), 44 desktop/touch checks passed at 320px/short landscape/desktop. Visual review enlarged the portrait view without scaling the avatar out of proportion. Stack 47, Four full local 47, existing desktop 38, static and creator checks passed. A Linux CI race in Four's test was corrected by waiting for both clients' authoritative playing state; no rejection assertion was weakened (c91d13b).

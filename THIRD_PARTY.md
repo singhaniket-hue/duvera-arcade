@@ -44,3 +44,6 @@ Original game engine, drawing code and UI written for Duvera Arcade, licensed GP
 
 ## Duvera Four and rooms
 Original GPL-3.0 rules, tactical bot, UI and authoritative private-room code. No third-party Connect Four implementation, artwork, or branding was imported. Existing creator media retain their separate rights notices. Wrangler is a development/deployment dependency (MIT/Apache-2.0 and transitive package licences in its packages); no Wrangler code or credentials ship in the static build.
+
+## Duvera Dash
+Original GPL-3.0 runner mechanics, procedural scenery/body illustration and UI. The running character combines newly drawn canvas body/limbs with the existing creator expression images at their original aspect ratio. No new generated media or third-party game assets were used. Existing creator-media attribution and rights remain unchanged.
