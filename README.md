@@ -94,6 +94,8 @@ Run `npm run check:stack` for deterministic mechanics and desktop/touch browser 
 
 Release status and rollback: [expansion progress](docs/EXPANSION-PROGRESS.md).
 
+Visitors can suggest a short reaction at `/creators/moosher/submit-audio.html`. Files stay private; the owner reviews them at `/creators/moosher/review-submissions.html` with a private key. Approval marks a candidate for a later game update, never automatic publication. See [submission limits, privacy and operations](submissions/README.md). `npm run check:submissions` runs isolated security and desktop/mobile browser tests.
+
 Four (`/play.html?game=four&creator=moosher`) includes easy/normal bots, keyboard/touch play, pause and retry, plus live private two-player rooms. The room service is in `multiplayer/`; see [deployment and cost notes](multiplayer/README.md). `npm run check:four` expects the local Worker on port 8787 (start with `npm run dev --prefix multiplayer`). CI runs the full room suite; `SOLO_ONLY=1` checks only solo gameplay and reports the omitted online tests.
 
 Dash (`/play.html?game=dash&creator=moosher`) is an original static runner. Space/Up/W jumps; hold Down/S or the large Duck button to duck. Crates and overhead signs are separated by at least 1.85 seconds at spawn, speed is capped, and the opening has a grace period. Stars add 25 points. Hiding the page pauses it; bests persist on pause/loss and are isolated per creator. `npm run check:dash` checks mechanics, a ten-minute generated course, keyboard/touch, collisions, persistence, resize and storage-denied behavior.

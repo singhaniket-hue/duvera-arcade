@@ -19,7 +19,8 @@
     "check:draw": "node scripts/check-draw.mjs && node scripts/check-party-room.mjs && node scripts/draw-browser-check.mjs",
     "check:quiz": "node scripts/check-quiz.mjs && node scripts/quiz-browser-check.mjs",
     "check:multiplayer": "node scripts/check-multiplayer.mjs",
-    "check:party-rigor": "node scripts/check-party-rigor.mjs"
+    "check:party-rigor": "node scripts/check-party-rigor.mjs",
+    "check:submissions": "node scripts/check-submissions-local.mjs"
   },
   "engines": {
     "node": ">=18"

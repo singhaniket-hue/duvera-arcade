@@ -44,6 +44,8 @@ jobs:
           npm run check:multiplayer
       - name: Dash mechanics and browser checks
         run: npm run check:dash
+      - name: Private audio submission security and browser checks
+        run: npm run check:submissions
       - name: Party edge cases, fuzz, eight-player protocol and phone checks
         run: npm run check:party-rigor
         env:
