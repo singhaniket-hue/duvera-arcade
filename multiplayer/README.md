@@ -1,6 +1,6 @@
 # Private room service
 
-Status: complete Four implementation tested locally against Wrangler's Durable Object runtime; **not deployed**. Existing CLI OAuth token expired; the scoped renewal consent timed out while awaiting the owner. Static production sets `ArcadeRooms.endpoint` to null and labels rooms unavailable. Do not describe local multiplayer results as public multiplayer verification.
+Status: Four, Draw and Quiz implementations tested locally against Wrangler's Durable Object runtime; **none of the multiplayer services is deployed**. The latest follow-up requests local implementation/testing only. Existing CLI OAuth token expired; the scoped renewal consent timed out while awaiting the owner. Static production sets `ArcadeRooms.endpoint` to null and labels rooms unavailable. Do not describe local multiplayer results as public multiplayer verification.
 
 ## Architecture and limits
 
@@ -26,3 +26,23 @@ Planning assumption (not measured production traffic): 50 concurrent rooms for o
 6. Repeat on the public domain. Retain previous Pages deployment for rollback and use `wrangler rollback` for Worker code if needed; do not roll back/delete the SQLite migration or live room data.
 
 `check-four.mjs` exercises all rule outcomes and complete bot games. `check-rooms.mjs` uses real room methods with fake transport/clock to cover expiry, grace timeout, storage restoration and abuse cases. `four-browser-check.mjs` exercises real independent browsers and a running Worker, with no game-state shortcut for match outcomes. Physical mobile/Safari and production latency/quota behavior remain additional review.
+
+## Draw and Quiz party service (local only)
+
+A second SQLite class, `PartyRoom` (migration v2), shares bounded sessions, hibernating sockets, authenticated reconnect, room expiry and host transfer across Draw and Quiz. Game-prefixed object names keep their namespaces separate. Existing FourRoom migration v1 and protocol remain intact. Public Pages configuration still has no Worker endpoint.
+
+Limits: 8 players, 16 sockets including pending authentication, 16 KiB incoming messages, 20 messages/second/socket, 256 recent command IDs, 24-hour room lifetime, 30-minute empty-room cleanup, 60-second disconnected-seat grace and 10-second authentication timeout. The existing hashed-IP creation gate remains 10 rooms/hour across all games. Leaving/kicking removes the token; active-room joins are rejected. Disconnect transfers hosting immediately; Draw skips a disconnected drawer's turn. Quiz timers continue and answers remain locked on reconnect.
+
+Draw batches up to 32 normalized points every 80 ms, with at most 120 gestures and 8,000 points per canvas. Server-side brush/coordinate/sequence checks reject forged and out-of-order batches. Undo/clear advance a canvas version; stale batches cannot reappear after them. Correct guesses are replaced with a neutral success message until round reveal. Word choices and the secret word are sent only to the drawer; aliases remain server-side. Packs allow 3–60 custom words with up to six aliases each. Feed history is capped at 30 entries and all user text is rendered with textContent.
+
+Quiz uses server-generated question IDs per round and server clocks. Correct indexes, explanations and scores are withheld until all eligible answers arrive or the 20-second deadline closes. The host advances through explanations. Ten rounds produce final standings. The public practice pack is separate and never fetched by the multiplayer client. Source files are public for review; this is casual private-room play, not an anti-cheat competition.
+
+### Usage implications before any future release
+
+Draw persists each accepted batch for recovery. A conservative continuous-drawing estimate is 12.5 batches/second × 600 seconds for an eight-turn match = 7,500 state writes, plus alarm writes. Budget roughly 15,000 row writes per busy room/match before guesses and cleanup. Five simultaneous ten-minute rooms could approach 75,000 writes; fifty would exceed the Free daily allowance. This is an estimate, not measured hosted usage. Drawing payload size also amplifies storage I/O and outgoing traffic. Quiz is much lighter: around 80 answers plus transitions per eight-player match, roughly hundreds of writes. Measure on a hosted preview and consider coarser persistence before opening Draw to a large stream; do not upgrade automatically.
+
+[Current pricing](https://developers.cloudflare.com/durable-objects/platform/pricing/) and [SQLite limits](https://developers.cloudflare.com/durable-objects/platform/limits/) were checked 2026-09-24. Free usage is account-wide. Rate limits and quota failures remain visible to users; no paid infrastructure or credentials were added.
+
+### Repeatable local verification
+
+Run `npm run check:multiplayer` at the repository root after installing root Playwright/Chromium and `npm ci --prefix multiplayer`. It creates its own isolated Worker storage under `output/room-test-*`, runs all three multiplayer suites, and shuts down its own process tree. Existing dev rooms and limits are not reset. Read README.md for the two-terminal manual-play setup. Every participant needs an independent browser context/profile; tabs in one profile intentionally reconnect to the same seat.

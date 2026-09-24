@@ -7,7 +7,7 @@ export class PartyRoom {
   if(req.method==='POST'&&(path==='/create'||path==='/join')){
    const body=await req.text();if(body.length>1024)return json({error:'Request too large.'},413);let m;try{m=JSON.parse(body);}catch{return json({error:'Invalid request.'},400);}
    if(!m||typeof m!=='object')return json({error:'Invalid request.'},400);
-   if(path==='/create'){if(this.room)return json({error:'Room exists.'},409);if(m.kind!=='draw')return json({error:'Unknown game.'},400);this.room=createParty(m.kind,now);}
+   if(path==='/create'){if(this.room)return json({error:'Room exists.'},409);if(!['draw','quiz'].includes(m.kind))return json({error:'Unknown game.'},400);this.room=createParty(m.kind,now);}
    if(!this.room||now>=this.room.expires)return json({error:'Room expired.'},410);
    try{const p=addPlayer(this.room,crypto.randomUUID()+crypto.randomUUID(),m.name,m.avatar,now);await this.save();this.broadcast();return json({token:p.token,seat:p.id});}catch(e){return json({error:e.message},409);}
   }

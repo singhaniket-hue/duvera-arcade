@@ -26,4 +26,9 @@ for(let i=0;i<20&&r.phase!=='finished';i++){if(r.phase==='choose')act(r.drawer,'
 check('full match reaches final scores',()=>assert.equal(r.phase,'finished'));
 act(r.host,'start');check('rematch resets scores',()=>assert.ok(r.players.every(p=>p.score===0)));
 act(r.host,'kick',{player:players[7].id});check('host kick removes token/seat',()=>assert.ok(!r.players.some(p=>p.token==='token7')));
+const bounded=createParty('draw',now);for(let i=0;i<3;i++)addPlayer(bounded,'limit'+i,'P'+i,0,now).offline=null;
+const boundedAction=(type,extra={})=>partyAction(bounded,bounded.host,{type,id:crypto.randomUUID(),roundId:bounded.roundId,canvasVersion:bounded.canvasVersion,...extra},now);boundedAction('start');boundedAction('choose',{choice:0});
+for(let seq=0;seq<250;seq++)boundedAction('stroke',{stroke:'long-stroke',seq,color:'#173e38',size:7,points:Array.from({length:32},()=>[.123456789,.987654321])});
+check('8,000-point canvas bound enforced without dropping accepted ink',()=>{assert.equal(bounded.points,8000);assert.throws(()=>boundedAction('stroke',{stroke:'long-stroke',seq:250,color:'#173e38',size:7,points:[[0,0]]}),/full/);assert.equal(bounded.points,8000);assert.ok(JSON.stringify(bounded).length<500000);});
+boundedAction('clear');for(let i=0;i<120;i++)boundedAction('stroke',{stroke:'s'+i,seq:0,color:'#173e38',size:7,points:[[0,0]]});check('120-gesture history cap enforced',()=>assert.throws(()=>boundedAction('stroke',{stroke:'extra',seq:0,color:'#173e38',size:7,points:[[0,0]]}),/limit/));
 console.log(`${checks} Draw rule/security checks passed.`);

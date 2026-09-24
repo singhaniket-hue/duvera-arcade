@@ -54,3 +54,7 @@ Original GPL-3.0 physics, five level patterns, power-ups and canvas drawing code
 ## Original Draw and party infrastructure
 
 Draw, the shared party client/Worker, and the English/Romanized Hindi word packs are original Duvera implementations under GPL-3.0. Existing creator artwork and clips retain their separate provenance and media-rights notices above. No proprietary game assets, word lists or source code were imported.
+
+## Original Quiz Party
+
+Quiz Party mechanics and the two editable question packs are original Duvera GPL-3.0 work. Questions summarize general game facts; individual primary-source URLs are included in each JSON entry. No proprietary question list, game art, levels or game source was copied. Product names identify their subjects and do not imply endorsement. Existing Moosher media retain separate source and rights notices.

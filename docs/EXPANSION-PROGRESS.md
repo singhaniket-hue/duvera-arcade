@@ -4,7 +4,7 @@
 - LIVE: Stack, Four solo (easy/normal bots), Dash, Smash, plus the three existing games.
 - Production source: `creator/moosher` at `24b90eaa7c56f452182398662cbffcc7b9a0259d`. Documentation/screenshot commits after this revision are not automatically deployed.
 - Four online: implemented and tested against the local Worker, NOT deployed. Cloudflare CLI OAuth renewal requires owner consent; the previous attempt expired. Do not reuse the stale consent page. Start a fresh narrowly scoped login when the owner is available, then follow `multiplayer/README.md` through preview and public two-context tests before enabling online mode.
-- Draw and Quiz Party: unstarted. Next task is to unblock and release Four online, then implement Draw. Do not advertise either as playable.
+- Draw and Quiz Party: implemented and tested locally in the follow-up below. Neither is deployed. Next task is a human local party playtest, then renew authorization and validate hosted multiplayer before any later release.
 - No new paid services, plan upgrades, DNS changes or media generation. Existing manually reviewed audio retained unchanged; new reaction mappings need a short human playtest.
 
 The entries below record the implementation and release sequence; earlier "in progress" entries are historical.
@@ -70,3 +70,12 @@ Draw adds original 3–8-player private rooms, three secret choices, 75-second r
 Validation: 20 rules/privacy cases, 11 actual room-method lifecycle/security cases, 30 independent-browser checks, static/creator checks and build. Browser scenarios include full three-player rotation, duplicate/stale/unauthorized inputs, secret isolation, touch drawing, 320px and short landscape, refresh/host departure, disabled storage, kick and ninth-player rejection. Fake-clock tests cover deadlines, hibernation restore and expiry; no hosted latency/quota behavior claimed. Screenshots: output/playwright/draw/.
 
 Next: implement and locally test Quiz Party using this bounded room service. No production release authorized by this follow-up.
+
+## Quiz Party — locally implemented, not deployed (2026-09-24)
+Original ten-question matches for 2–8 players; host start/advance/rematch, server deadlines and scoring, answer secrecy until closure, private seats/reconnect, host transfer and final standings. Separate static practice has keyboard/touch answers, pause on hide, retry and creator-isolated local best. Two editable original JSON packs link to checked primary sources in docs/QUIZ-SOURCES.md.
+
+Final local validation: Draw 22 rule/security + 33 browser checks; shared PartyRoom 11 lifecycle/transport checks; Quiz 53 scoring/rules/practice + 59 browser checks; Four 47 browser checks and existing mechanics/security checks. The isolated check:multiplayer runner passed against real local Wrangler. Tests include full matches, simultaneous/duplicate/stale input, host departure, reconnect/refresh, secret isolation, actual 20-second timeout, blocked storage, 320px portrait, short landscape and keyboard/touch. Existing regressions passed: 100 generic mobile, 122 creator mobile, 38 desktop, Stack 47, Dash 44, Smash 47. Static/creator checks, build and Worker dry-run passed. Generic-navigation assertions now require all nine exact cards and creator opt-out, reflecting the two new local entries.
+
+Remaining: physical mobile/Safari and human multi-person playtesting, new audio event timing, hosted network/quota validation and any eventual deployment authorization. No hosting or DNS changes were made; production remains 24b90ea. Existing user-reviewed clips remain unchanged. The local development server rejects access to server-only question/word source folders; static dist excludes them.
+
+Run locally using README.md's two-terminal instructions or the already-started preview at http://127.0.0.1:4173/. Use independent browser profiles/private contexts for participants. Draw needs three people; Quiz needs two, or choose Solo practice. The local service remains limited to this computer and configured origins.

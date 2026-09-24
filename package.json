@@ -16,7 +16,9 @@
     "check:four": "node scripts/check-four.mjs && node scripts/check-rooms.mjs && node scripts/four-browser-check.mjs",
     "check:dash": "node scripts/check-dash.mjs && node scripts/dash-browser-check.mjs",
     "check:smash": "node scripts/check-smash.mjs && node scripts/smash-browser-check.mjs",
-    "check:draw": "node scripts/check-draw.mjs && node scripts/check-party-room.mjs && node scripts/draw-browser-check.mjs"
+    "check:draw": "node scripts/check-draw.mjs && node scripts/check-party-room.mjs && node scripts/draw-browser-check.mjs",
+    "check:quiz": "node scripts/check-quiz.mjs && node scripts/quiz-browser-check.mjs",
+    "check:multiplayer": "node scripts/check-multiplayer.mjs"
   },
   "engines": {
     "node": ">=18"

@@ -121,7 +121,8 @@ try {
   check('generic navigation retains opt-out',await f.evaluate(()=>ArcadeCreator===null)&&await page.title()==='2048 · Duvera Arcade');
   await page.locator('.back-link').click();
   await page.locator('.game-card').first().waitFor({state:'visible'});
-  check('generic back navigation retains opt-out',await page.locator('.game-card').count()===7);
+  const genericCards=await page.locator('.game-card').evaluateAll(cards=>cards.map(a=>new URL(a.href).searchParams.get('game')).sort());
+  check('generic back navigation retains opt-out',JSON.stringify(genericCards)===JSON.stringify(['2048','clumsy-bird','dash','draw','four','hextris','quiz','smash','stack'])&&await page.evaluate(()=>ArcadeCreator===null&&new URLSearchParams(location.search).get('creator')==='default'));
   check('no browser errors or failed asset requests',errors.length===0);
   console.log(`${passed} desktop checks passed; no human audio approval implied.`);
 } finally {if(errors.length)console.error(errors);await browser.close();server?.kill();}

@@ -1,5 +1,6 @@
 // Original authoritative party rules. No transport, browser state or client-supplied clocks.
 import words from './draw-words.json' with {type:'json'};
+import {startQuiz,nextQuiz,closeQuiz,quizAction,quizSnapshot} from './quiz-core.mjs';
 export const COLORS=['#173e38','#e34c4c','#e9b826','#25844b','#2478ce','#a753c6','#ffffff'];
 export const normalize=s=>String(s).normalize('NFKC').toLowerCase().trim().replace(/\s+/g,' ');
 export function cleanPack(input){
@@ -29,6 +30,7 @@ function nextDraw(r,now){
 }
 function choose(r,index,now){r.word=r.choices[index];r.choices=[];r.phase='drawing';r.started=now;r.hinted=false;r.deadline=now+75000;}
 export function advance(r,now){
+ if(r.kind==='quiz'){if(r.phase==='question'&&now>=r.deadline){closeQuiz(r);r.revision++;return true;}return false;}
  if(r.phase==='drawing'&&!r.hinted&&now>=r.started+40000&&now<r.deadline){r.hinted=true;r.revision++;return true;}
  if(r.deadline&&now>=r.deadline){if(r.phase==='choose')choose(r,0,now);else if(r.phase==='drawing')endDraw(r,now);else if(r.phase==='reveal')nextDraw(r,now);r.revision++;return true;}return false;
 }
@@ -49,11 +51,12 @@ export function partyAction(r,id,m,now){
  if(m.type==='lock'){host();r.locked=!r.locked;}
  else if(m.type==='kick'){host();if(m.player===id)fail('Use Leave to leave the room.');if(!r.players.some(x=>x.id===m.player))fail('Unknown player.');depart(r,m.player,now,true);}
  else if(m.type==='leave'){depart(r,id,now,true);}
- else if(m.type==='pack'){host();if(!['lobby','finished'].includes(r.phase))fail('Change packs between matches.');if(!['english','hindi','custom'].includes(m.pack))fail('Unknown word pack.');r.custom=m.pack==='custom'?cleanPack(m.words):null;r.pack=m.pack;}
+ else if(m.type==='pack'){host();if(r.kind!=='draw')fail('This game has no word packs.');if(!['lobby','finished'].includes(r.phase))fail('Change packs between matches.');if(!['english','hindi','custom'].includes(m.pack))fail('Unknown word pack.');r.custom=m.pack==='custom'?cleanPack(m.words):null;r.pack=m.pack;}
  else if(m.type==='start'){
-  host();if(!['lobby','finished','paused'].includes(r.phase))fail('Match already started.');if(connected(r).length<3)fail('Draw needs 3 connected players.');
-  if(r.phase!=='paused'){r.players.forEach(x=>x.score=0);r.queue=connected(r).map(x=>x.id);r.round=0;r.total=r.queue.length;r.feed=[];}r.locked=true;nextDraw(r,now);
- }else if(m.type==='skip'){host();if(!['choose','drawing','reveal'].includes(r.phase))fail('No round to skip.');if(r.phase==='reveal')nextDraw(r,now);else endDraw(r,now,'Host skipped this turn.');}
+  host();if(!['lobby','finished','paused'].includes(r.phase))fail('Match already started.');
+  if(r.kind==='quiz')startQuiz(r,now);else{if(connected(r).length<3)fail('Draw needs 3 connected players.');if(r.phase!=='paused'){r.players.forEach(x=>x.score=0);r.queue=connected(r).map(x=>x.id);r.round=0;r.total=r.queue.length;r.feed=[];}r.locked=true;nextDraw(r,now);}
+ }else if(m.type==='skip'){host();if(r.kind!=='draw'||!['choose','drawing','reveal'].includes(r.phase))fail('No round to skip.');if(r.phase==='reveal')nextDraw(r,now);else endDraw(r,now,'Host skipped this turn.');}
+ else if(r.kind==='quiz')quizAction(r,p,m,now);
  else{
   if(m.roundId!==r.roundId)fail('That input belongs to an earlier round.');
   if(m.type==='choose'){
@@ -82,5 +85,6 @@ export function partySnapshot(r,id,now,includeDrawing=false){
  if(id===r.drawer&&r.phase==='choose')s.choices=r.choices.map(x=>x.word);
  if(r.phase==='drawing'){if(id===r.drawer)s.word=r.word.word;else {const elapsed=now-r.started;s.hint=Array.from(r.word.word).map((c,i)=>c===' '?' / ':elapsed>=40000&&i===0?c:'_').join(' ');}}
  if(includeDrawing)s.drawing=r.drawing;
+ if(r.kind==='quiz')Object.assign(s,quizSnapshot(r,id));
  return s;
 }

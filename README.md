@@ -99,3 +99,25 @@ Four (`/play.html?game=four&creator=moosher`) includes easy/normal bots, keyboar
 Dash (`/play.html?game=dash&creator=moosher`) is an original static runner. Space/Up/W jumps; hold Down/S or the large Duck button to duck. Crates and overhead signs are separated by at least 1.85 seconds at spawn, speed is capped, and the opening has a grace period. Stars add 25 points. Hiding the page pauses it; bests persist on pause/loss and are isolated per creator. `npm run check:dash` checks mechanics, a ten-minute generated course, keyboard/touch, collisions, persistence, resize and storage-denied behavior.
 
 Smash (`/play.html?game=smash&creator=moosher`) has five original brick layouts. Move with mouse, arrows, or a touch drag; Space/tap launches a serve. Three lives per fresh level attempt; catch W for twelve seconds of a wider paddle, S for ten seconds of a slower ball, or + for an extra life (capped at five). Level unlocks are stored separately for each creator and offered on reload. Physics uses small fixed substeps and limits shallow ball angles. Run `npm run check:smash` for all-level collision tests and desktop/mobile gameplay, progression and failure-case checks.
+
+## Draw and Quiz: local preview only
+
+Draw (`/play.html?game=draw&creator=moosher`) supports private rooms for 3–8 players, English/Romanized Hindi/custom words, rotation, server-checked guesses, drawing tools and streamer mode. Quiz (`/play.html?game=quiz&creator=moosher`) has static solo practice and 2–8-player private ten-question matches. Multiplayer correct answers are sent only after a question closes; practice uses a separate pack. The deployed seven-game site has not been changed by this local implementation.
+
+For a local session, use two PowerShell terminals at the repository root:
+
+```powershell
+# Terminal 1: local room service (no cloud deployment)
+npm ci --prefix multiplayer
+npm run dev --prefix multiplayer
+
+# Terminal 2: static app with a local-only endpoint override
+$env:ROOM_ENDPOINT='http://127.0.0.1:8787'
+npm start -- --host 127.0.0.1
+```
+
+Open `http://127.0.0.1:4173/creators/moosher/`. Share the generated invite between independent browser profiles/private windows on this computer; ordinary tabs share a seat through localStorage. Rooms need 3 participants for Draw and 2 for Quiz. The service only permits configured origins; these loopback invites are not Internet invitations. The public `assets/room-config.js` remains unset.
+
+`npm run check:multiplayer` starts an isolated local Worker, runs Four/Draw/Quiz rules and browser suites, and stops its own process tree. Test-only SQLite state and logs are retained under ignored `output/room-test-*`. It does not deploy anything or relax production limits. Existing `check:four`, `check:draw` and `check:quiz` accept an already-running Worker through `ROOM_ENDPOINT`. Install the repository's Playwright version and Chromium first as described above.
+
+[Party architecture, constraints and next steps](multiplayer/README.md) · [Question provenance](docs/QUIZ-SOURCES.md) · [Progress](docs/EXPANSION-PROGRESS.md).
