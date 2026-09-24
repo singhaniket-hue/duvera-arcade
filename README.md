@@ -93,3 +93,5 @@ Stack (`/play.html?game=stack&creator=moosher`, or `/games/stack/?creator=mooshe
 Run `npm run check:stack` for deterministic mechanics and desktop/touch browser tests. The suite supports `TEST_BASE_URL` and `SCREENSHOT_DIR`. Precision edge cases and high towers use documented deterministic fixtures, with actual buttons/keyboard/touch driving the browser integration.
 
 Release status and rollback: [expansion progress](docs/EXPANSION-PROGRESS.md).
+
+Four (`/play.html?game=four&creator=moosher`) includes easy/normal bots, keyboard/touch play, pause and retry. Private-room implementation is in `multiplayer/`; online is disabled in production until Worker deployment authorization is renewed and hosted tests pass. See [room deployment and cost notes](multiplayer/README.md). `npm run check:four` expects the local Worker on port 8787 (start with `npm run dev --prefix multiplayer`). CI runs the full room suite; `SOLO_ONLY=1` explicitly checks only the released solo scope on a hosted deployment and reports that omission.

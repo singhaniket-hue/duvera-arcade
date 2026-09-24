@@ -12,7 +12,8 @@
     "check:desktop": "node scripts/desktop-check.mjs",
     "build": "node scripts/build.mjs",
     "check:creator": "node scripts/check-creator.mjs",
-    "check:stack": "node scripts/check-stack.mjs && node scripts/stack-browser-check.mjs"
+    "check:stack": "node scripts/check-stack.mjs && node scripts/stack-browser-check.mjs",
+    "check:four": "node scripts/check-four.mjs && node scripts/check-rooms.mjs && node scripts/four-browser-check.mjs"
   },
   "engines": {
     "node": ">=18"

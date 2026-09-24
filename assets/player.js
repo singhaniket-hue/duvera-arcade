@@ -1,6 +1,7 @@
 /* Duvera Arcade player shell. GPL-3.0. */
 'use strict';
 const games = {
+  'four': {name:'Four',path:'games/four/',controls:'Connect four · Tap a column or keys 1–7'},
   'stack': {name:'Stack',path:'games/stack/',controls:'Space, click or tap to drop · P to pause · M for voice'},
   'clumsy-bird': {name: 'Clumsy Bird', path: 'games/clumsy-bird/', controls: 'Space, click or tap to fly · M to mute'},
   '2048': {name: '2048', path: 'games/2048/', controls: 'Arrow keys or swipe to slide · R to restart'},

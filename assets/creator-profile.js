@@ -17,9 +17,9 @@
     assets:new URL('creators/moosher/media/',root).href,
     channel:'https://www.youtube.com/@Moosherr',
     source:'https://www.youtube.com/watch?v=LnAsPIae94Q',
-    titles:{'clumsy-bird':'Moosh Flap','2048':'Moosh 2048','hextris':'Moosh Spin','stack':'Moosh Stack'},
+    titles:{'clumsy-bird':'Moosh Flap','2048':'Moosh 2048','hextris':'Moosh Spin','stack':'Moosh Stack','four':'Moosh Four'},
     palette:{ink:'#173e38',teal:'#155a51',mint:'#c2e5cd',coral:'#ef9279',cream:'#f4f0e7',gold:'#f2cd65'},
-    games:{stack:{expressions:{idle:'emote-focus.png',streak:'emote-win.png',lose:'emote-sad.png'},sounds:{start:'start',milestone:'milestone',win:'win',lose:'lose'}}},
+    games:{four:{tokens:['emote-focus.png','emote-surprise.png'],expressions:{idle:'emote-focus.png',win:'emote-win.png',lose:'emote-sad.png'},sounds:{start:'start',win:'win',lose:'lose'}},stack:{expressions:{idle:'emote-focus.png',streak:'emote-win.png',lose:'emote-sad.png'},sounds:{start:'start',milestone:'milestone',win:'win',lose:'lose'}}},
     clips
   }) : null;
   // The future creator subdomain opens its edition without duplicating deployments.

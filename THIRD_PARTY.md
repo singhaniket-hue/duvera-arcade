@@ -41,3 +41,6 @@ Creator artwork was generated with Higgsfield from the public channel photo. Fou
 
 ## Duvera Stack
 Original game engine, drawing code and UI written for Duvera Arcade, licensed GPL-3.0. No external game implementation or new media was imported. Reuses creator artwork and clips under the existing separate provenance and rights notices.
+
+## Duvera Four and rooms
+Original GPL-3.0 rules, tactical bot, UI and authoritative private-room code. No third-party Connect Four implementation, artwork, or branding was imported. Existing creator media retain their separate rights notices. Wrangler is a development/deployment dependency (MIT/Apache-2.0 and transitive package licences in its packages); no Wrangler code or credentials ship in the static build.

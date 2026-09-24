@@ -99,7 +99,7 @@ try {
   check('Spin scores isolated',await f.evaluate(()=>localStorage.getItem('duvera.hextris.moosher.highscores')!==null&&localStorage.getItem('duvera.hextris.highscores')===null));
 
   await page.goto(base+'creators/moosher/sounds.html');
-  check('four provisional clips and timestamp links',await page.locator('.clip').count()===4&&await page.locator('.clip a[href*="&t="]').count()===4);
+  check('four retained clips and timestamp links',await page.locator('.clip').count()===4&&await page.locator('.clip a[href*="&t="]').count()===4);
   check('review has no autoplay',await page.evaluate(()=>testVoices.length===0));
   await page.locator('.clip button').first().click();
   await page.waitForFunction(()=>testVoices[0]?.readyState>=2);
@@ -121,7 +121,7 @@ try {
   check('generic navigation retains opt-out',await f.evaluate(()=>ArcadeCreator===null)&&await page.title()==='2048 · Duvera Arcade');
   await page.locator('.back-link').click();
   await page.locator('.game-card').first().waitFor({state:'visible'});
-  check('generic back navigation retains opt-out',await page.locator('.game-card').count()===4);
+  check('generic back navigation retains opt-out',await page.locator('.game-card').count()===5);
   check('no browser errors or failed asset requests',errors.length===0);
   console.log(`${passed} desktop checks passed; no human audio approval implied.`);
 } finally {if(errors.length)console.error(errors);await browser.close();server?.kill();}
