@@ -25,7 +25,8 @@ async function checkLink(file, value, runtime = false) {
   }
   const clean = decodeURIComponent(value.split(/[?#]/)[0]);
   if (!clean) return;
-  const target = path.resolve(root, path.dirname(file), clean);
+  // Web-root links are relative to this site's root, not the filesystem drive.
+  const target = clean.startsWith('/') ? path.resolve(root, '.' + clean) : path.resolve(root, path.dirname(file), clean);
   assert.ok(target === path.resolve(root) || target.startsWith(root), `Link escapes repository: ${value}`);
   await stat(target).catch(() => { throw Error(`Missing asset in ${file}: ${value}`); });
   links++;

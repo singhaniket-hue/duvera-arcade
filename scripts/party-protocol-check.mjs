@@ -4,7 +4,9 @@
 import assert from 'node:assert/strict';
 
 const endpoint = process.env.ROOM_ENDPOINT || 'http://127.0.0.1:8787';
-const origin = 'http://localhost:5288';
+const local = ['localhost', '127.0.0.1'].includes(new URL(endpoint).hostname);
+const origin = process.env.TEST_ORIGIN || (local ? 'http://localhost:5288' : 'https://moosher.duvera.app');
+if (!local && process.env.ONLY !== 'match') throw Error('Hosted checks require ONLY=match; quota/flood probes are local-only.');
 const results = [];
 const check = (name, ok, detail = '') => { results.push(!!ok); console.log(`${ok ? 'PASS' : 'FAIL'} ${name}${!ok && detail ? '\n     ' + detail : ''}`); };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -12,7 +14,7 @@ let ipCounter = 1;
 const freshIp = () => `10.20.${ipCounter >> 8}.${ipCounter++ & 255}`;
 
 async function post(path, body, headers = {}) {
-  const res = await fetch(endpoint + path, {method: 'POST', headers: {Origin: origin, 'Content-Type': 'application/json', 'CF-Connecting-IP': freshIp(), ...headers}, body: typeof body === 'string' ? body : JSON.stringify(body)});
+  const res = await fetch(endpoint + path, {method: 'POST', headers: {Origin: origin, 'Content-Type': 'application/json', ...(local ? {'CF-Connecting-IP': freshIp()} : {}), ...headers}, body: typeof body === 'string' ? body : JSON.stringify(body)});
   let data = {}; try { data = await res.json(); } catch {}
   return {status: res.status, ...data};
 }
@@ -112,7 +114,7 @@ async function drawMatch() {
     }
     host.send('skip'); // leave the 7-second reveal early
   }
-  await host.until(s => s.phase === 'finished', 'match end');
+  await Promise.all(players.map(p => p.until(s => s.phase === 'finished', 'match end')));
   check('draw: 8-player match gives every player exactly one turn', new Set(drawers).size === 8, drawers.join(', '));
   check('draw: every guesser receives every ink batch, in order and unaltered', !inkProblems.length, inkProblems.slice(0, 3).join('; '));
   check('draw: simultaneous correct guesses all score (100–300 each, drawer +50 per guesser)', !scoreProblems.length, scoreProblems.slice(0, 3).join('; '));
@@ -187,7 +189,7 @@ async function quizMatch() {
     await sleep(400); // a person reads the explanation; also keeps the host under the 20 msg/s limit
     if (q < 10) host.send('next');
   }
-  await host.until(s => s.phase === 'finished', 'final standings');
+  await Promise.all(players.map(p => p.until(s => s.phase === 'finished', 'final standings')));
   check('quiz: 8 simultaneous answers are all counted and scored correctly on 10 questions', !problems.length, problems.slice(0, 3).join('; '));
   check('quiz: a question closes as soon as all 8 have answered', Math.max(...closeTimes) < 3000, 'slowest close ' + Math.max(...closeTimes) + 'ms');
   check('quiz: no one sees the correct answer or others\' choices before a question closes', !early.length, early.slice(0, 3).join('; '));
@@ -283,5 +285,5 @@ for (const [name, fn] of [['draw match', drawMatch], ['draw resilience', drawRes
   try { await fn(); } catch (e) { check(`${name}: completed without a protocol stall`, false, e.message); }
 }
 const failed = results.filter(x => !x).length;
-console.log(`\n${results.length - failed} passed, ${failed} failed (local Worker ${endpoint}).`);
+console.log(`\n${results.length - failed} passed, ${failed} failed (${local ? 'local' : 'hosted'} Worker ${endpoint}).`);
 process.exit(failed ? 1 : 0);
