@@ -18,7 +18,8 @@
     "check:smash": "node scripts/check-smash.mjs && node scripts/smash-browser-check.mjs",
     "check:draw": "node scripts/check-draw.mjs && node scripts/check-party-room.mjs && node scripts/draw-browser-check.mjs",
     "check:quiz": "node scripts/check-quiz.mjs && node scripts/quiz-browser-check.mjs",
-    "check:multiplayer": "node scripts/check-multiplayer.mjs"
+    "check:multiplayer": "node scripts/check-multiplayer.mjs",
+    "check:party-rigor": "node scripts/check-party-rigor.mjs"
   },
   "engines": {
     "node": ">=18"
