@@ -8,14 +8,14 @@ $('#best').textContent=best;
 window.stackGame=game;
 function overlay(title,message,button){$('#headline').textContent=title;$('#message').textContent=message;$('#action').textContent=button;$('#overlay').hidden=false;}
 function start(){game.start();previousBest=best;offcuts=[];camera=0;$('#score').textContent=0;$('#overlay').hidden=true;$('#pause').disabled=false;$('#drop').disabled=false;$('#reaction').textContent='Find the centre.';ui.expression('idle');ui.react('start');}
-function pause(){if(game.status!=='playing')return;game.pause();window.CreatorAudio?.stop();$('#drop').disabled=true;overlay('Take a breath.','Your tower is right here.','Resume');}
+function pause(){if(game.status!=='playing')return;game.pause();window.CreatorAudio?.stop();$('#drop').disabled=true;overlay('Paused','Resume to drop the next block.','Resume');}
 function resume(){game.resume();last=performance.now();$('#overlay').hidden=true;$('#drop').disabled=false;}
 function drop(){const result=game.drop();if(!result)return;
   if(result.offcut)offcuts.push({...result.offcut,y:0,velocity:0,angle:0});
   if(result.kind==='miss'){
     $('#pause').disabled=true;$('#drop').disabled=true;ui.expression('lose');
     $('#reaction').textContent='One more try?';
-    overlay(game.score>previousBest?'A new personal best!':'So close.',`${game.score} blocks · best perfect streak ${game.bestStreak}`,'Try again');
+    overlay(game.score>previousBest?'A new personal best!':'Tower missed.',`${game.score} blocks · best perfect streak ${game.bestStreak}`,'Try again');
     ui.react(game.score>previousBest?'win':'lose');return;
   }
   $('#score').textContent=game.score;

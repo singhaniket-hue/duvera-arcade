@@ -11,6 +11,8 @@
     "check:mobile": "node scripts/mobile-check.mjs",
     "check:desktop": "node scripts/desktop-check.mjs",
     "build": "node scripts/build.mjs",
+    "check:copy": "python scripts/check-copy.py",
+    "check:visitors": "node scripts/visitor-browser-check.mjs",
     "check:creator": "node scripts/check-creator.mjs",
     "check:stack": "node scripts/check-stack.mjs && node scripts/stack-browser-check.mjs",
     "check:four": "node scripts/check-four.mjs && node scripts/check-rooms.mjs && node scripts/four-browser-check.mjs",

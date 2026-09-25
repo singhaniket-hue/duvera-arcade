@@ -9,7 +9,7 @@
     const card=document.createElement('section');card.className='clip';
     const title=document.createElement('h2');title.textContent=clip.label;
     const info=document.createElement('p');info.textContent=eventNames[clip.event]+' · '+(clip.end-clip.start).toFixed(2)+' seconds';
-    const quote=document.createElement('p');quote.textContent='Caption candidate: “'+clip.transcript+'”';
+    const quote=document.createElement('p');quote.textContent='Automatic source caption: “'+clip.transcript+'”';
     const source=document.createElement('a');source.href=p.source+'&t='+Math.floor(clip.start)+'s';source.target='_blank';source.rel='noopener';source.textContent='Source '+Math.floor(clip.start/60)+':'+String(Math.floor(clip.start%60)).padStart(2,'0')+' ↗';
     const actions=document.createElement('div');actions.className='clip-actions';
     const play=document.createElement('button');play.type='button';play.textContent='▶ Preview';play.addEventListener('click',()=>{a.play(clip.event,{id:clip.id,preview:true});document.getElementById('review-status').textContent='Preview: '+clip.label;});

@@ -9,14 +9,14 @@ function levels(){const select=$('#select-level');select.replaceChildren();for(l
 levels();
 function hud(){$('#restart').disabled=game.status==='menu';for(const id of ['level','score','lives'])$('#'+id).textContent=game[id];$('#launch').disabled=game.status!=='ready';$('#pause').disabled=!['ready','playing'].includes(game.status);$('#power').textContent=[game.time<game.wideUntil?'Wide paddle':'',game.time<game.slowUntil?'Slow ball':''].filter(Boolean).join(' · ');}
 function overlay(title,message,action){$('#headline').textContent=title;$('#message').textContent=message;$('#action').textContent=action;$('#overlay').hidden=false;}
-function start(level){game.reset(level);milestone=0;last=performance.now();$('#overlay').hidden=true;$('#level-label').hidden=true;$('#reaction').textContent='Ready for a good bounce?';ui.expression('idle');ui.react('start');hud();}
-function pause(){if(!['playing','ready'].includes(game.status))return;game.pause();window.CreatorAudio?.stop();overlay('Hold that thought.','Your ball is waiting.','Resume');hud();}
+function start(level){game.reset(level);milestone=0;last=performance.now();$('#overlay').hidden=true;$('#level-label').hidden=true;$('#reaction').textContent='Launch when you’re ready.';ui.expression('idle');ui.react('start');hud();}
+function pause(){if(!['playing','ready'].includes(game.status))return;game.pause();window.CreatorAudio?.stop();overlay('Paused','Resume when you’re ready.','Resume');hud();}
 function resume(){game.resume();last=performance.now();$('#overlay').hidden=true;hud();}
 function finish(){
  if(game.status==='level'||game.status==='won'){
   unlocked=Math.max(unlocked,Math.min(5,game.level+1));if(!ui.write('unlocked',unlocked))$('#storage-note').hidden=false;levels();
-  overlay(game.status==='won'?'All five. Nicely done!':'Level cleared!',`${game.score} points · ${game.lives} lives left`,game.status==='won'?'Play again':'Next level');ui.expression('win');ui.react('win');$('#reaction').textContent='A clean sweep.';
- }else{overlay('One more go?',`${game.score} points · Level ${game.level}`,'Try again');ui.expression('lose');ui.react('lose');$('#reaction').textContent='You had a good run.';}
+  overlay(game.status==='won'?'All five levels cleared!':'Level cleared!',`${game.score} points · ${game.lives} lives left`,game.status==='won'?'Play again':'Next level');ui.expression('win');ui.react('win');$('#reaction').textContent='Every brick cleared.';
+ }else{overlay('Game over',`${game.score} points · Level ${game.level}`,'Try again');ui.expression('lose');ui.react('lose');$('#reaction').textContent='No lives left. Try the level again.';}
  hud();
 }
 $('#action').onclick=()=>{if(game.status==='paused')resume();else if(game.status==='level'){game.next();$('#overlay').hidden=true;milestone=0;ui.expression('idle');hud();}else start(game.status==='menu'?Number($('#select-level').value):game.status==='won'?1:game.level);};
