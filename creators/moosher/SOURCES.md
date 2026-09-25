@@ -18,7 +18,7 @@ This is a fan-made Duvera Arcade edition, not an official creator website or end
 “Drawing My Members LIVE under 5 mins (GONE WRONG)” — Moosher:
 https://www.youtube.com/watch?v=LnAsPIae94Q
 
-This is the creator’s edited livestream-highlights upload, not an unedited VOD. Cuts were selected using its automatic Hindi captions. Four provisional dialogue extracts are included; speaker identity, boundaries, background sounds and suitability still need a human listening pass. The game and sound-review page expose this status. No voice cloning or synthesized dialogue was used.
+This is the creator’s edited livestream-highlights upload, not an unedited VOD. Cuts were selected using its automatic Hindi captions. The site owner has since reviewed all four included clips during gameplay. The sound settings page lets visitors preview or disable them. Automatic source captions are retained as captions, not a verified transcript. No voice cloning or synthesized dialogue was used.
 
 | File | Source seconds | Default trigger |
 | --- | --- | --- |
@@ -29,7 +29,7 @@ This is the creator’s edited livestream-highlights upload, not an unedited VOD
 
 Total selected source duration: 7.85 seconds. Processing: 90Hz high-pass, loudness target −20 LUFS, true-peak target −2dB, 15ms fade-in, 45ms fade-out, mono 44.1kHz MP3 at 96kbps. Normalization improves consistency; it does not remove other voices or background music. Check pronunciation, full words, speaker identity and volume by ear.
 
-Laughter, crying and shouting have **not** been verified or included. Do not relabel the generated facial expressions or these dialogue clips as authentic emotional recordings. Add only speaker-verified clips and record their provenance here and in the registry. A full-video analysis request remained queued during this work and was not used as evidence.
+The included files are short dialogue reactions. Generated facial expressions do not establish that an audio clip contains laughter, crying or shouting. Additional clips can be sent through the private submission form; each needs its own source check before use.
 
 ## Rights and attribution
 
@@ -44,4 +44,4 @@ Original game licenses are in their game directories. The extracted creator audi
 5. Replace an audio file under the same filename to keep its mapping, or edit `assets/creator-profile.js` for new clips and timestamps. Update this document whenever a source changes.
 
 ## Owner review update — 2026-09-24
-The site owner confirms manual gameplay review of the existing four clips. They are retained unchanged. Earlier pending-review statements describe initial extraction status. New game event mappings should still receive a brief human playtest.
+The site owner confirms manual gameplay review of the existing four clips. They are retained unchanged. The website copy update does not change these clips or their event mappings. Any future clip or mapping change needs its own listening review.
