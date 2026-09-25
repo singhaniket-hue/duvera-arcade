@@ -18,21 +18,52 @@ jobs:
         with:
           node-version: 22
       - name: Static checks
-        run: npm run check
+        run: npm run check && npm run check:creator
+      - name: Website copy check
+        run: python3 scripts/check-copy.py
       - name: Build
         run: npm run build
       - name: Install Playwright
         run: |
           npm install --no-save --no-package-lock playwright@1.56.1
           npx playwright install --with-deps chromium
+      - name: Visitor pages and direct links
+        run: node scripts/visitor-browser-check.mjs
       - name: Mobile touch and layout checks
         run: npm run check:mobile
         env:
           SCREENSHOT_DIR: mobile-screenshots
+      - name: Moosher edition mobile checks
+        run: npm run check:mobile
+        env:
+          CREATOR_EDITION: moosher
+          SCREENSHOT_DIR: moosher-screenshots
+      - name: Desktop gameplay, persistence and audio checks
+        run: npm run check:desktop
+      - name: Stack mechanics and browser checks
+        run: npm run check:stack
+      - name: Four, Draw and Quiz rules and independent multiplayer browsers
+        run: |
+          npm ci --prefix multiplayer
+          npm run check:multiplayer
+      - name: Dash mechanics and browser checks
+        run: npm run check:dash
+      - name: Private audio submission security and browser checks
+        run: npm run check:submissions
+      - name: Party edge cases, fuzz, eight-player protocol and phone checks
+        run: npm run check:party-rigor
+        env:
+          FUZZ_GAMES: 6000
+          SCREENSHOT_DIR: output/playwright/party-rigor
+      - name: Smash mechanics and browser checks
+        run: npm run check:smash
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: mobile-screenshots
-          path: mobile-screenshots
+          path: |
+            mobile-screenshots
+            moosher-screenshots
+            output/playwright
           if-no-files-found: ignore
