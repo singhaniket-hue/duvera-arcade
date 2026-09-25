@@ -19,12 +19,16 @@ jobs:
           node-version: 22
       - name: Static checks
         run: npm run check && npm run check:creator
+      - name: Website copy check
+        run: python3 scripts/check-copy.py
       - name: Build
         run: npm run build
       - name: Install Playwright
         run: |
           npm install --no-save --no-package-lock playwright@1.56.1
           npx playwright install --with-deps chromium
+      - name: Visitor pages and direct links
+        run: node scripts/visitor-browser-check.mjs
       - name: Mobile touch and layout checks
         run: npm run check:mobile
         env:

@@ -84,7 +84,7 @@
     const restart = GameManager.prototype.restart;
     GameManager.prototype.restart = function () {lastTop=2;wasOver=false;wasWon=false;emit('start');return restart.apply(this,arguments);};
     document.querySelector('.title').textContent='Moosh 2048';
-    document.querySelector('.game-intro').innerHTML='Same numbers. More masti. Reach <strong>2048!</strong>';
+    document.querySelector('.game-intro').innerHTML='Merge matching numbers to make the <strong>2048 tile.</strong>';
     const intro=document.querySelector('.game-explanation');
     intro.insertAdjacentHTML('beforebegin','<p class="creator-game-note">A fan-made Moosher edition · Original game by Gabriele Cirulli</p>');
   }

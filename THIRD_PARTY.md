@@ -37,7 +37,7 @@ Follow-up fixes (2026-09-24): generic navigation retains its explicit creator op
 
 The three game HTML entrypoints load optional creator adapters. They are no-ops for the default edition. `assets/creator-game.js` switches Clumsy Bird sprite/title resources, provides a namespaced public `me.save` adapter, and hooks round/score events. For 2048 it changes the heading, scoped saves and reaction hooks; for Hextris it changes canvas title text, scoped storage and reaction hooks. The compiled melonJS engine and gameplay bundles are unchanged. Additional CSS, a creator menu, opt-in profile routing, audio controls and an audition page are provided by Duvera.
 
-Creator artwork was generated with Higgsfield from the public channel photo. Four short audio candidates were extracted from the creator’s edited livestream highlights. These media are **not covered by the game code licenses**; source URLs, timestamps, generation IDs and unresolved speaker/audio review are documented in `creators/moosher/SOURCES.md`. The edition is labeled fan-made and does not claim endorsement.
+Creator artwork was generated with Higgsfield from the public channel photo. Four short audio clips were extracted from the creator’s edited livestream highlights. These media are **not covered by the game code licenses**; source URLs, timestamps, generation IDs and the site owner’s completed gameplay review are documented in `creators/moosher/SOURCES.md`. The edition is labeled fan-made and does not claim endorsement.
 
 ## Duvera Stack
 Original game engine, drawing code and UI written for Duvera Arcade, licensed GPL-3.0. No external game implementation or new media was imported. Reuses creator artwork and clips under the existing separate provenance and rights notices.
@@ -58,3 +58,7 @@ Draw, the shared party client/Worker, and the English/Romanized Hindi word packs
 ## Original Quiz Party
 
 Quiz Party mechanics and the two editable question packs are original Duvera GPL-3.0 work. Questions summarize general game facts; individual primary-source URLs are included in each JSON entry. No proprietary question list, game art, levels or game source was copied. Product names identify their subjects and do not imply endorsement. Existing Moosher media retain separate source and rights notices.
+
+## Website copy update (2026-09-25)
+
+Public instructions and interface copy were rewritten without changing game rules. Hextris now initializes empty score displays at zero. The copy-check tool is SlopMonster by Jack Roberts, MIT licensed, pinned to `f261dbf11c2a206ecd8780c070a46dae64edd8be`. Its unmodified checker and license are retained in `scripts/vendor/slopmonster/` for development checks only; they are not part of the static website build. Source: https://github.com/ItsssssJack/SlopMonster.

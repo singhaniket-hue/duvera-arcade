@@ -11,7 +11,7 @@ function overlay(title,message,action){$('#headline').textContent=title;$('#mess
 function update(){for(const key of ['score','coins'])$('#'+key).textContent=game[key];if(game.score>best){best=game.score;$('#best').textContent=best;}}
 function save(){if(!ui.write('best',best))$('#storage-note').hidden=false;}
 function start(){game.start();previousBest=best;milestone=0;last=performance.now();$('#overlay').hidden=true;for(const id of ['pause','jump','duck'])$('#'+id).disabled=false;ui.react('start');update();}
-function pause(){if(game.status!=='playing')return;game.pause();save();window.CreatorAudio?.stop();$('#jump').disabled=true;$('#duck').disabled=true;overlay('Taking a breather.','Resume when you’re ready.','Resume');}
+function pause(){if(game.status!=='playing')return;game.pause();save();window.CreatorAudio?.stop();$('#jump').disabled=true;$('#duck').disabled=true;overlay('Paused','Resume when you’re ready.','Resume');}
 function resume(){game.resume();last=performance.now();$('#overlay').hidden=true;$('#jump').disabled=false;$('#duck').disabled=false;}
 function finish(){update();save();for(const id of ['pause','jump','duck'])$('#'+id).disabled=true;overlay(game.score>previousBest?'A new personal best!':'One more run?',`${game.score} points · ${game.coins} stars`,'Try again');ui.react(game.score>previousBest?'win':'lose');}
 $('#action').onclick=()=>game.status==='paused'?resume():start();$('#pause').onclick=pause;$('#jump').onclick=()=>game.jump();
@@ -46,7 +46,7 @@ function draw(now){const dt=Math.min((now-last)/1000||0,.1);last=now;const befor
  ctx.fillStyle=game.status==='over'?palette.coral:palette.teal;ctx.beginPath();ctx.roundRect(cx-15,foot-(duck?29:45),30,duck?18:30,8);ctx.fill();
  ctx.strokeStyle=palette.ink;ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(cx-13,foot-(duck?23:38));ctx.lineTo(cx-22+phase,foot-(duck?14:26));ctx.moveTo(cx+13,foot-(duck?23:38));ctx.lineTo(cx+23-phase,foot-(duck?15:28));ctx.stroke();
  const face=faces[game.status==='over'?'hit':game.y>0?'jump':'run'];const size=duck?34:46,headY=foot-(duck?50:86);if(face?.complete&&face.naturalWidth)ctx.drawImage(face,cx-size/2,headY,size,size);else{ctx.fillStyle=palette.gold;ctx.beginPath();ctx.arc(cx,headY+size/2,size/2,0,Math.PI*2);ctx.fill();ctx.fillStyle=palette.ink;ctx.fillRect(cx-9,headY+17,5,5);ctx.fillRect(cx+4,headY+17,5,5);}
- if(game.status==='playing'&&game.time<3){ctx.fillStyle=palette.ink;ctx.font='bold 18px sans-serif';ctx.textAlign='center';ctx.fillText('A little warm-up. Try a jump!',worldWidth/2,110);}
+ if(game.status==='playing'&&game.time<3){ctx.fillStyle=palette.ink;ctx.font='bold 18px sans-serif';ctx.textAlign='center';ctx.fillText('Try a jump before the obstacles.',worldWidth/2,110);}
  ctx.restore();requestAnimationFrame(draw);
 }
 requestAnimationFrame(draw);
