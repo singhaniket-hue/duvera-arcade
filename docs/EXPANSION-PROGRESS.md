@@ -1,9 +1,12 @@
 # Arcade expansion progress
 
 ## Current handoff — 2026-09-25
-- Website copy rewrite in validation on `content/visitor-ready`, based on current `creator/moosher` (`7618013`). SlopMonster-guided copy covers every public page; all 17 pages pass 5/5. Claude rival pass was blocked by CLI authentication and is not claimed complete. [Copy scope and checks](WEBSITE-COPY.md).
-- Production is still the audio-submissions release below until this release is verified. Retain Pages deployment `2d1b8ad9-006a-4154-82e5-826e1db1260c` as this task's rollback. No backend, DNS or paid-plan changes are needed.
-- Next: finish regression suites, PR/CI, deploy and verify preview, merge normally, promote the tested artifact and verify the public domain.
+- Website copy update LIVE at https://moosher.duvera.app. All public pages and current media notices reviewed; no unfinished placeholders remain. [Release, verification, screenshots and rollback](WEBSITE-COPY-RELEASE.md).
+- Tested/deployed source `content/visitor-ready` at `019c7dfb77f088ddcaceb943acead1c41d726189`; PR #6 merged normally into `creator/moosher` as `1712b3a`. Pages production `06d74c94-efa1-4584-a6f2-6c12166f41f2`; final preview https://9ed44877.duvera-moosher.pages.dev. The release documentation commit is not an additional website deployment.
+- Full CI passed on the exact revision. Public: 215 visitor checks, 224 matching files, 14 security headers, all static game smoke suites, 27 multiplayer phone checks and 14 private submission checks. All QA submissions deleted. Existing audio and gameplay rules unchanged; no Worker, DNS or paid-plan changes.
+- SlopMonster's 17-page checker passes at 5/5. Its Claude rival editing pass could not authenticate and is not claimed complete; this did not block website testing or deployment.
+- Rollback to Pages production `2d1b8ad9-006a-4154-82e5-826e1db1260c` to restore the prior site with audio submissions. Both Workers remain unchanged.
+- No unfinished release task remains. Optional next work: physical Safari/device testing and owner review of incoming audio clips.
 
 ## Previous handoff — 2026-09-24
 - Audio submissions LIVE: [visitor form](https://moosher.duvera.app/creators/moosher/submit-audio.html), [private review](https://moosher.duvera.app/creators/moosher/review-submissions.html). PR #5 merged as `b94e05a`; exact tested/uploaded source `feature/audio-submissions` at `71ebd68cababe38deb7d182ea36b7186aeb5b93f`. Pages production `2d1b8ad9-006a-4154-82e5-826e1db1260c`; preview https://4363273d.duvera-moosher.pages.dev. Local security/format 38, browser 43, full CI, preview/public 14 each, 224 file hashes and 14 security headers passed. Owner key delivered separately outside source control. [Release and rollback](AUDIO-SUBMISSIONS-RELEASE.md). No test clips retained; approval only marks candidates for a later update.
