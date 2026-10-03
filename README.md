@@ -125,3 +125,9 @@ Open `http://127.0.0.1:4173/creators/moosher/`. Share the generated invite betwe
 `npm run check:party-rigor` runs the additional departure/recovery, secret-word, Unicode, payload/storage, eight-player protocol and phone regressions from PR #3. CI also runs these checks with 6,000 fuzzed games of 400 steps. In PowerShell, use `$env:FUZZ_GAMES='6000'` before the command to match CI. Do not edit Worker source while a suite is running: its development server reloads and disconnects sockets.
 
 [Party architecture, constraints and next steps](multiplayer/README.md) · [Question provenance](docs/QUIZ-SOURCES.md) · [Progress](docs/EXPANSION-PROGRESS.md).
+
+### Blast / Moosh Blast
+
+Open `games/blast/?creator=moosher` or choose Moosh Blast in the creator menu. Solo against three bots, or two local players plus two bots. P1 uses WASD + Space; P2 uses arrows + Enter in local mode. In solo, arrows also move P1. Touch D-pad and bomb button support solo on phones. P pauses, M toggles creator voice; backgrounding pauses the game. Bombs explode after 2.4 seconds, chain, stop at stone and destroy the first crate in each ray. Power-ups increase bomb capacity, range and speed. Last survivor wins; three-minute timeout with multiple survivors draws. Solo death ends the run. Creator-specific solo wins persist locally when storage is available.
+
+Run `npm run check:blast` for engine regression and Chromium browser checks. Screenshots are written to `output/playwright/blast/`. No backend or paid infrastructure is needed.

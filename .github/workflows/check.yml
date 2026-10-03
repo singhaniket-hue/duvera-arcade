@@ -40,6 +40,8 @@ jobs:
           SCREENSHOT_DIR: moosher-screenshots
       - name: Desktop gameplay, persistence and audio checks
         run: npm run check:desktop
+      - name: Blast mechanics and browser checks
+        run: npm run check:blast
       - name: Stack mechanics and browser checks
         run: npm run check:stack
       - name: Four, Draw and Quiz rules and independent multiplayer browsers

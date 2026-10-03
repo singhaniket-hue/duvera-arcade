@@ -62,3 +62,7 @@ Quiz Party mechanics and the two editable question packs are original Duvera GPL
 ## Website copy update (2026-09-25)
 
 Public instructions and interface copy were rewritten without changing game rules. Hextris now initializes empty score displays at zero. The copy-check tool is SlopMonster by Jack Roberts, MIT licensed, pinned to `f261dbf11c2a206ecd8780c070a46dae64edd8be`. Its unmodified checker and license are retained in `scripts/vendor/slopmonster/` for development checks only; they are not part of the static website build. Source: https://github.com/ItsssssJack/SlopMonster.
+
+## Blast / Moosh Blast
+
+Original Duvera GPL-3.0 grid arena implementation, procedural canvas artwork and bot logic. Inspired by the classic bomb-arena genre; no Bomberman code, sprites, music or logos are included. Reuses the existing Higgsfield creator portraits and reviewed audio under their existing media notices. Solo versus three bots or two players sharing a keyboard with two bots; no online mode or new server.
