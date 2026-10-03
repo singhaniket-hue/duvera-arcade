@@ -21,3 +21,11 @@ bower_components
 
 # Generated static build
 /dist/
+/output/
+
+.wrangler/
+/multiplayer/output/
+/multiplayer/**/output/
+
+.dev.vars*
+.env*

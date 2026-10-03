@@ -1,0 +1,21 @@
+/creators/moosher/review-submissions.html
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none'; form-action 'self'; base-uri 'none'
+  Referrer-Policy: no-referrer
+  Cache-Control: no-store
+
+/creators/moosher/submit-audio.html
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none'; form-action 'self'; base-uri 'none'
+  Referrer-Policy: no-referrer
+
+/creators/moosher/review-submissions
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none'; form-action 'self'; base-uri 'none'
+  Referrer-Policy: no-referrer
+  Cache-Control: no-store
+
+/creators/moosher/submit-audio
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none'; form-action 'self'; base-uri 'none'
+  Referrer-Policy: no-referrer

@@ -1,0 +1,27 @@
+const $=id=>document.getElementById(id),endpoint=window.ArcadeSubmissions?.endpoint,creator=window.ArcadeCreator?.id;
+let key='',generation=0;const urls=new Set();
+function message(text,error=false){$('inbox-status').textContent=text;$('inbox-status').dataset.error=String(error);}
+function clear(){for(const audio of document.querySelectorAll('audio')){audio.pause();audio.removeAttribute('src');audio.load();}for(const url of urls)URL.revokeObjectURL(url);urls.clear();$('clip-inbox').replaceChildren();}
+function lock(){generation++;key='';$('review-key').value='';clear();$('inbox').hidden=true;$('login-panel').hidden=false;message('Inbox locked.');}
+async function request(path='',method='GET'){if(!endpoint||!creator)throw new Error('The submission inbox is temporarily unavailable.');const response=await fetch(endpoint+'/admin/'+creator+path,{method,headers:{Authorization:'Bearer '+key},signal:AbortSignal.timeout(30000)});if(!response.ok){if(response.status===401)lock();let data;try{data=await response.json();}catch{}throw new Error(data?.error||'The inbox could not be reached.');}return response;}
+function element(tag,text,className){const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(className)el.className=className;return el;}
+function blobUrl(blob){const url=URL.createObjectURL(blob);urls.add(url);return url;}
+function save(blob,name){const url=blobUrl(blob),link=element('a');link.href=url;link.download=name;link.click();setTimeout(()=>{URL.revokeObjectURL(url);urls.delete(url);},10000);}
+function render(clips){clear();$('inbox-count').textContent=clips.length?`${clips.length} private submission${clips.length===1?'':'s'}`:'No submissions yet.';for(const clip of clips){
+  const {info}=clip,card=element('article',undefined,'inbox-card');card.dataset.id=clip.id;card.append(element('h2',info.title),element('p',clip.status==='approved'?'Approved candidate · not published':'Awaiting your review','badge'),element('p',`${info.duration.toFixed(2)}s · ${Math.ceil(info.bytes/1024)} KiB · suggested: ${info.reaction}`),element('p',`Submitted ${new Date(clip.created).toLocaleDateString()} · expires ${new Date(clip.expires).toLocaleDateString()}`));
+  if(info.credit)card.append(element('p','Nickname: '+info.credit));if(info.note)card.append(element('p',info.note));
+  const source=element('a',`Source: ${info.start}–${info.end} seconds`);const sourceURL=new URL(info.source);if(['youtube.com','www.youtube.com','m.youtube.com','youtu.be'].includes(sourceURL.hostname))sourceURL.searchParams.set('t',String(Math.floor(info.start)));source.href=sourceURL.href;source.target='_blank';source.rel='noopener noreferrer';card.append(source);
+  const audio=element('audio');audio.controls=true;audio.preload='none';audio.hidden=true;audio.setAttribute('aria-label','Preview '+info.title);audio.addEventListener('play',()=>{for(const other of document.querySelectorAll('audio'))if(other!==audio)other.pause();});card.append(audio);
+  const actions=element('div',undefined,'submission-actions');const thisGeneration=generation;
+  function action(label,fn){const button=element('button',label,'submission-button secondary');button.addEventListener('click',async()=>{button.disabled=true;try{await fn();}catch(error){if(thisGeneration===generation)message(error.message,true);}finally{button.disabled=false;}});actions.append(button);return button;}
+  let blob=null;async function load(){if(!blob)blob=await(await request('/'+clip.id+'/audio')).blob();if(thisGeneration!==generation)throw new Error('Inbox locked.');return blob;}
+  action('Load preview',async()=>{const data=await load();if(!audio.src)audio.src=blobUrl(data);audio.hidden=false;message('Preview ready. Press Play to listen.');});
+  if(clip.status!=='approved')action('Approve candidate',async()=>{const r=await request('/'+clip.id+'/approve','POST');const data=await r.json();if(thisGeneration!==generation)return;await refresh();message(data.message);});
+  action('Download audio',async()=>save(await load(),`clip-${clip.id}.${info.extension}`));
+  action('Download source notes',async()=>save(new Blob([JSON.stringify({...clip,publication:'Not published. Verify speaker, source and permission before adding to a game.'},null,2)],{type:'application/json'}),`clip-${clip.id}-source.json`));
+  action('Reject / delete',async()=>{if(!confirm('Delete this submission and its audio? Download it first if you want to keep a copy.'))return;await request('/'+clip.id+'/delete','POST');if(thisGeneration!==generation)return;await refresh();message('Submission deleted.');});card.append(actions);$('clip-inbox').append(card);
+}}
+async function refresh(){const current=generation;const data=await(await request()).json();if(current!==generation)return;render(data.clips);$('login-panel').hidden=true;$('inbox').hidden=false;}
+$('login-form').addEventListener('submit',async event=>{event.preventDefault();key=$('review-key').value.trim();$('review-key').value='';generation++;try{await refresh();message('Private inbox opened. Approval never publishes a clip.');}catch(error){key='';message(error.message,true);}});
+$('refresh-inbox').addEventListener('click',()=>refresh().catch(error=>message(error.message,true)));$('lock-inbox').addEventListener('click',lock);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)for(const audio of document.querySelectorAll('audio'))audio.pause();});window.addEventListener('pagehide',lock);
