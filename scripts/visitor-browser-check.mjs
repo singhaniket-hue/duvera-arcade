@@ -11,8 +11,8 @@ if(server)await new Promise(resolve=>server.stdout.once('data',resolve));
 const shots=path.resolve(process.env.SCREENSHOT_DIR||'output/playwright/visitor-copy');await mkdir(shots,{recursive:true});
 const browser=await chromium.launch();let passed=0;
 function check(name,ok){assert.ok(ok,name);passed++;console.log('PASS '+name);}
-const ids=['clumsy-bird','2048','hextris','stack','four','dash','smash','draw','quiz'];
-const names=['Moosh Flap','Moosh 2048','Moosh Spin','Moosh Stack','Moosh Four','Moosh Dash','Moosh Smash','Moosh Draw','Moosh Quiz Party'];
+const ids=['clumsy-bird','2048','hextris','stack','four','dash','smash','draw','quiz','blast'];
+const names=['Moosh Flap','Moosh 2048','Moosh Spin','Moosh Stack','Moosh Four','Moosh Dash','Moosh Smash','Moosh Draw','Moosh Quiz Party','Moosh Blast'];
 const unfinished=/lorem ipsum|coming soon|under construction|\[needs (?:number|source)\]|Still to source/i;
 try{
  for(const size of [{width:1440,height:1000},{width:320,height:568},{width:667,height:375}]){
@@ -25,7 +25,7 @@ try{
    check(label+' has finished visible copy',!unfinished.test(await page.locator('body').innerText())&&await page.locator('[placeholder]').count()===0);
    check(label+' artwork loads',await page.locator('img').evaluateAll(xs=>xs.filter(x=>x.getBoundingClientRect().width>0).every(x=>x.complete&&x.naturalWidth>0)));
   }
-  await page.goto(base+'creators/moosher/');await ready('Creator home '+suffix);check('Nine creator game cards',await page.locator('.creator-card').count()===9);await page.screenshot({path:path.join(shots,'home-'+suffix+'.png'),fullPage:true});
+  await page.goto(base+'creators/moosher/');await ready('Creator home '+suffix);check('Ten creator game cards',await page.locator('.creator-card').count()===10);await page.screenshot({path:path.join(shots,'home-'+suffix+'.png'),fullPage:true});
   for(const [i,id]of ids.entries()){
    await page.goto(base+'creators/moosher/');await page.locator(`.creator-card[href*="game=${id}"]`).click();await page.waitForSelector('#game-frame');
    const frame=await(await page.$('#game-frame')).contentFrame();await frame.waitForLoadState('networkidle');
@@ -36,7 +36,7 @@ try{
   }
   for(const [route,label]of [['index.html?creator=default','Generic home'],['creators/moosher/sounds.html','Sound settings'],['creators/moosher/submit-audio.html','Clip submission'],['creators/moosher/review-submissions.html','Private inbox'],['credits.html','Credits'],['play.html?game=missing','Unknown game']]){
    await page.goto(base+route);await ready(label+' '+suffix);
-   if(label==='Generic home')check('Nine generic game cards',await page.locator('.game-card').count()===9);
+   if(label==='Generic home')check('Ten generic game cards',await page.locator('.game-card').count()===10);
    if(label==='Sound settings'){check('Four reviewed clips',await page.locator('.clip').count()===4);await page.locator('#voice-volume').fill('0');await page.locator('#mute-voices').check();await page.reload();check('Sound choices persist',await page.locator('#voice-volume').inputValue()==='0'&&await page.locator('#mute-voices').isChecked());}
    if(label==='Clip submission'){check('Retention text is accurate',(await page.locator('body').innerText()).includes('even if downloaded'));check('Upload source is required',await page.locator('input[name=source]').getAttribute('required')!==null);}
    if(label==='Private inbox')check('Private inbox stays locked',await page.locator('#login-panel').isVisible()&&!await page.locator('#inbox').isVisible());

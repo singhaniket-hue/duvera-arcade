@@ -1,6 +1,7 @@
 /* Duvera Arcade player shell. GPL-3.0. */
 'use strict';
 const games = {
+  'blast': {name:'Blast',path:'games/blast/',controls:'Arrows / WASD to move · Space to bomb · P to pause · Solo or shared keyboard'},
   'quiz': {name:'Quiz Party',path:'games/quiz/',controls:'Choose an answer · Solo practice or private rooms'},
   'draw': {name:'Draw',path:'games/draw/',controls:'Private rooms · Draw with mouse/touch · Type guesses'},
   'smash': {name:'Smash',path:'games/smash/',controls:'← → / mouse / drag paddle · Space to launch · P to pause'},

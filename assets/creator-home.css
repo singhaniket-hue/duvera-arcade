@@ -4,3 +4,5 @@
 @media(max-width:700px){.audio-toolbar label{flex-wrap:wrap}.audio-toolbar input[type=range]{max-width:150px}}
 
 .stack-cover{background:#c2e5cd;gap:12px}.stack-cover:before,.stack-cover:after{display:none}.stack-cover img{width:105px;height:140px}.stack-art{display:flex;flex-direction:column-reverse;gap:3px;align-items:center;width:120px;transform:rotate(-4deg)}.stack-art i{display:block;width:120px;height:27px;background:#155a51;border:2px solid #173e38;border-radius:4px}.stack-art i:nth-child(2){width:108px;background:#ef9279}.stack-art i:nth-child(3){width:95px;background:#f2cd65}.stack-art i:nth-child(4){width:95px;transform:translateX(15px)}
+
+.blast-cover{background:#24483a}.blast-cover:before,.blast-cover:after{display:none}.blast-cover img{width:150px;height:150px;transform:translateX(35px)}.bomb-art{position:absolute;left:28px;top:54px;width:94px;height:94px;border:5px solid #f2cd65;border-radius:50%;display:grid;place-items:center;background:#152822;color:#f2cd65;font-size:57px;transform:rotate(-12deg)}
